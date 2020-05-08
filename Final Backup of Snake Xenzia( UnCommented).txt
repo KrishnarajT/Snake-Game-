@@ -1,0 +1,1004 @@
+//almost everything works, minute changes are supposed to be done like entering file names for different colors, pause and beck to menu works the only thing that doesnt work is the return function and the exceptino thrown. if that fixes all is done.
+#include "Header.h"
+struct Player
+{
+	string name = "";
+	int score[10] = { 0 };
+	int level = 1;
+}player_info, scoreboard, playing;
+struct snake
+{
+	int x = 0;
+	int y = 0;
+}S;
+struct body
+{
+	int x = 0;
+	int y = 0;
+}B[500];
+sf::RectangleShape Apple_Shape(sf::Vector2f(30.0f, 30.0f));
+sf::RectangleShape Up_Border(sf::Vector2f(1060.0f, 15.0f));
+sf::RectangleShape Down_Border(sf::Vector2f(1075.0f, 15.0f));
+sf::RectangleShape Left_Border(sf::Vector2f(15.0f, 720.0f));
+sf::RectangleShape Right_Border(sf::Vector2f(15.0f, 720.0f));
+sf::RectangleShape Snake_Head(sf::Vector2f(30.0f, 30.0f));
+sf::RectangleShape Snake_Body(sf::Vector2f(30.0f, 30.0f));
+sf::Texture Apple_Texture;
+sf::Texture Snake_Head_Texture;
+sf::Texture Snake_Body_Texture;
+sf::Texture Background_Texture;
+sf::Texture Foreground_Texture;
+sf::Sprite Back_Image;
+sf::Sprite Fore_Image;
+sf::Text Game_Name;		
+sf::Text Player_Name;	
+sf::Text Player_Name_Name;	
+sf::Text Cur_Level;		
+sf::Text Cur_Level_No;
+sf::Text Exit;	
+sf::Text Cur_Level_Score;
+sf::Text Cur_Level_Score_No;
+sf::Text Player_High_Score_No;
+sf::Text Pause_Game;
+sf::Text UnPause_Game;
+sf::Text Player_High_Score;
+sf::Font font;
+sf::Font fonthead;
+class Snake_Game
+{
+public:
+	sf::Vector2f Up_Border_Loc, Down_Border_Loc, Left_Border_Loc, Right_Border_Loc, Snake_Head_Loc, Apple_Loc;
+	int X = 15, Y = 15, dir = 4, Total_Score = 0, sizex = 30, sizey = 30, var = 0, temp;	
+	bool a = 1, w = 1, s = 1, d = 1, c = 0, p = 0;
+	float X_Offset_Fore_Img = 125, Y_Offset_Fore_Img = 120;
+	string Snake_Color = "B", Back_Color = "G", Font_Type = "Roboto", Apple_Color = "R";
+	bool Collision_Detection()
+	{
+		if (Snake_Head_Loc.x <= Up_Border_Loc.x + 23)
+		{
+			return 0;
+		}
+		if (Snake_Head_Loc.x >= 1150)
+		{
+			return 0;
+		}
+		if (Snake_Head_Loc.y <= 135)
+		{
+			return 0;
+		}
+		if (Snake_Head_Loc.y >= 812)
+		{
+			return 0;
+		}
+		else return 1;
+	}
+	string Player_Input()
+	{
+		string pname;
+		ofstream plout("store_info1.dat", ios::binary | ios::app);
+		ifstream plin("store_info1.dat", ios::binary);
+		bool var = 0;
+		cout << "\nEnter name of the player-\n";
+		cin >> pname;
+		while (!plin.eof())
+		{
+			plin.read((char*)& player_info, sizeof(player_info));
+			if (pname == player_info.name)
+			{
+				cout << "\nPlayer exists\n";
+				var = 1;
+				plin.close();
+				plout.close();
+				return pname;
+			}
+		}
+		if (var == 0)
+		{
+			Player New_Player;
+			New_Player.name = pname;
+			plin.close();
+			plout.write((char*)&New_Player, sizeof(New_Player));
+			cout << "\nName saved....\n ";
+			plout.close();
+			return pname;
+		}
+
+	}
+	void Move_Snake()
+	{
+		if (Snake_Color == "B")
+		{
+			if (dir == 0)
+			{
+				Snake_Head_Texture.loadFromFile("PsnakeL.png");
+				Snake_Body_Texture.loadFromFile("PRbodyL.png");
+				S.x -= 1;
+			}
+			if (dir == 1)
+			{
+				Snake_Head_Texture.loadFromFile("PsnakeU.png");
+				Snake_Body_Texture.loadFromFile("PRbodyU.png");
+				S.y -= 1;
+			}
+			if (dir == 2)
+			{
+				Snake_Head_Texture.loadFromFile("Psnake.png");
+				Snake_Body_Texture.loadFromFile("PRbody.png");
+				S.x += 1;
+			}
+			if (dir == 3)
+			{
+				Snake_Head_Texture.loadFromFile("PsnakeD.png");
+				Snake_Body_Texture.loadFromFile("PRbodyD.png");
+				S.y += 1;
+			}
+		}
+		if (Snake_Color == "G")
+		{
+			if (dir == 0)
+			{
+				Snake_Head_Texture.loadFromFile("green_snakeL.png");
+				Snake_Body_Texture.loadFromFile("green_RbodyL.png");
+				S.x -= 1;
+			}
+			if (dir == 1)
+			{
+				Snake_Head_Texture.loadFromFile("green_snakeU.png");
+				Snake_Body_Texture.loadFromFile("green_RbodyU.png");
+				S.y -= 1;
+			}
+			if (dir == 2)
+			{
+				Snake_Head_Texture.loadFromFile("green_snake.png");
+				Snake_Body_Texture.loadFromFile("green_Rbody.png");
+				S.x += 1;
+			}
+			if (dir == 3)
+			{
+				Snake_Head_Texture.loadFromFile("green_snakeD.png");
+				Snake_Body_Texture.loadFromFile("green_RbodyD.png");
+				S.y += 1;
+			}
+		}
+		if (Snake_Color == "P")
+		{
+			if (dir == 0)
+			{
+				Snake_Head_Texture.loadFromFile("purple_snakeL.png");
+				Snake_Body_Texture.loadFromFile("Purple_RbodyL.png");
+				S.x -= 1;
+			}
+			if (dir == 1)
+			{
+				Snake_Head_Texture.loadFromFile("purple_snakeU.png");
+				Snake_Body_Texture.loadFromFile("Purple_RbodyU.png");
+				S.y -= 1;
+			}
+			if (dir == 2)
+			{
+				Snake_Head_Texture.loadFromFile("purple_snake.png");
+				Snake_Body_Texture.loadFromFile("Purple_Rbody.png");
+				S.x += 1;
+			}
+			if (dir == 3)
+			{
+				Snake_Head_Texture.loadFromFile("purple_snakeD.png");
+				Snake_Body_Texture.loadFromFile("Purple_RbodyD.png");
+				S.y += 1;
+			}
+		}
+		if (Snake_Color == "R")
+		{
+			if (dir == 0)
+			{
+				Snake_Head_Texture.loadFromFile("red_snakeL.png");
+				Snake_Body_Texture.loadFromFile("red_RbodyL.png");
+				S.x -= 1;
+			}
+			if (dir == 1)
+			{
+				Snake_Head_Texture.loadFromFile("red_snakeU.png");
+				Snake_Body_Texture.loadFromFile("red_RbodyU.png");
+				S.y -= 1;
+			}
+			if (dir == 2)
+			{
+				Snake_Head_Texture.loadFromFile("red_snake.png");
+				Snake_Body_Texture.loadFromFile("red_Rbody.png");
+				S.x += 1;
+			}
+			if (dir == 3)
+			{
+				Snake_Head_Texture.loadFromFile("red_snakeD.png");
+				Snake_Body_Texture.loadFromFile("red_RbodyD.png");
+				S.y += 1;
+			}
+		}
+		if (Snake_Color == "Y")
+		{
+			if (dir == 0)
+			{
+				Snake_Head_Texture.loadFromFile("yellow_snakeL.png");
+				Snake_Body_Texture.loadFromFile("yellow_RbodyL.png");
+				S.x -= 1;
+			}
+			if (dir == 1)
+			{
+				Snake_Head_Texture.loadFromFile("yellow_snakeU.png");
+				Snake_Body_Texture.loadFromFile("yellow_RbodyU.png");
+				S.y -= 1;
+			}
+			if (dir == 2)
+			{
+				Snake_Head_Texture.loadFromFile("yellow_snake.png");
+				Snake_Body_Texture.loadFromFile("yelllow_Rbody.png");
+				S.x += 1;
+			}
+			if (dir == 3)
+			{
+				Snake_Head_Texture.loadFromFile("yellow_snakeD.png");
+				Snake_Body_Texture.loadFromFile("yellow_RbodyD.png");
+				S.y += 1;
+			}
+		}
+	}
+	void Delay(int millisecond)
+	{
+		bool a = 0;
+		sf::Clock clock;
+		while (a == 0)
+		{
+			sf::Time T1, T2;
+			sf::Time delay = sf::milliseconds(millisecond);
+			T1 = clock.getElapsedTime();
+			if (T1.asMilliseconds() < delay.asMilliseconds())
+			{
+				a = 0;
+			}
+			else
+			{
+				a = 1;
+			}
+		}
+	}
+	void AssignFont()
+	{
+		fonthead.loadFromFile("times.ttf");
+		if (Font_Type == "Roboto")
+		{
+			font.loadFromFile("Roboto-thin.ttf");
+		}
+		else if (Font_Type == "Consola")
+		{
+			font.loadFromFile("Consola.ttf");
+		}
+		else if (Font_Type == "Calibri")
+		{
+			font.loadFromFile("calibri.ttf");
+		}
+		else if (Font_Type == "TimesNewRoman")
+		{
+			font.loadFromFile("times.ttf");
+		}
+		else if (Font_Type == "Arial")
+		{
+			font.loadFromFile("arial.ttf");
+		}
+
+	}
+	void AssignAppleColor()
+	{
+		if (Apple_Color == "R")
+		{
+			Apple_Texture.loadFromFile("apple3.png");
+		}
+		else if (Apple_Color == "G")
+		{
+			Apple_Texture.loadFromFile("apple_green.png");
+		}
+		else if (Apple_Color == "Y")
+		{
+			Apple_Texture.loadFromFile("apple_yellow.png");
+		}
+		else if (Apple_Color == "B")
+		{
+			Apple_Texture.loadFromFile("apple_black.png");
+		}
+	}
+	void AssignSnakeColor()
+	{
+		if (Snake_Color == "B")
+		{
+			Snake_Head_Texture.loadFromFile("PsnakeL.png");
+			Snake_Body_Texture.loadFromFile("PRbodyL.png");
+		}
+		else if (Snake_Color == "G")
+		{
+			Snake_Head_Texture.loadFromFile("green_snake.png");
+			Snake_Body_Texture.loadFromFile("green_RBody.png");
+		}
+		else if (Snake_Color == "R")
+		{
+			Snake_Head_Texture.loadFromFile("red_snake.png");
+			Snake_Body_Texture.loadFromFile("red_Rbody.png");
+		}
+		else if (Snake_Color == "P")
+		{
+			Snake_Head_Texture.loadFromFile("purple_snake.png");
+			Snake_Body_Texture.loadFromFile("Purple_Rbody.png");
+		}
+		else if (Snake_Color == "Y")
+		{
+			Snake_Head_Texture.loadFromFile("yellow_snake.png");
+			Snake_Body_Texture.loadFromFile("yellow_Rbody.png");
+		}
+	}
+	void AssignBackColor()
+	{
+		if (Back_Color == "G")
+		{
+			assert(Background_Texture.loadFromFile("back.jpg"));
+			assert(Foreground_Texture.loadFromFile("frimg.png"));
+		}
+		else if (Back_Color == "J")
+		{
+			assert(Background_Texture.loadFromFile("back6.jpg"));
+			assert(Foreground_Texture.loadFromFile("frimg3.png"));
+		}
+		else if (Back_Color == "N")
+		{
+			assert(Background_Texture.loadFromFile("back10.jpg"));
+			assert(Foreground_Texture.loadFromFile("frimg2-A.png"));
+		}
+		else if (Back_Color == "D")
+		{
+			assert(Background_Texture.loadFromFile("back1.jpg"));
+			assert(Foreground_Texture.loadFromFile("grass-E.png"));
+		}
+	}
+	void SetAttributes()
+	{
+		Snake_Head.setOrigin(0, 0);
+		Apple_Shape.setTexture(&Apple_Texture);
+		Snake_Head.setTexture(&Snake_Head_Texture);
+		Snake_Body.setTexture(&Snake_Body_Texture);
+		Up_Border_Loc.x = 125.0f;
+		Up_Border_Loc.y = 120.0f;
+		Down_Border_Loc.x = 125.0f;
+		Down_Border_Loc.y = 840.0f;
+		Left_Border_Loc.x = 125.0f;
+		Left_Border_Loc.y = 120.0f;
+		Right_Border_Loc.x = 1185.0f;
+		Right_Border_Loc.y = 120.0f;
+		Back_Image.setTexture(Background_Texture);
+		Fore_Image.setTexture(Foreground_Texture);
+		Snake_Head.setFillColor(sf::Color::Red);
+		Snake_Body.setFillColor(sf::Color::White);
+		Apple_Shape.setFillColor(sf::Color::White);
+		Up_Border.setFillColor(sf::Color::Green);
+		Down_Border.setFillColor(sf::Color::Green);
+		Left_Border.setFillColor(sf::Color::Green);
+		Right_Border.setFillColor(sf::Color::Green);
+		Fore_Image.setOrigin(-X_Offset_Fore_Img, -Y_Offset_Fore_Img);
+		Up_Border.setOrigin(-Up_Border_Loc.x, -Up_Border_Loc.y);
+		Down_Border.setOrigin(-Down_Border_Loc.x, -Down_Border_Loc.y);
+		Left_Border.setOrigin(-Left_Border_Loc.x, -Left_Border_Loc.y);
+		Right_Border.setOrigin(-Right_Border_Loc.x, -Right_Border_Loc.y);
+		Apple_Shape.setOrigin(-Apple_Loc.x, -Apple_Loc.y);
+		S.x = 20;
+		S.y = 20;
+
+	}
+	void KeyPressChecker()
+	{
+
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::A) && a == 1 && d == 1)
+		{
+			dir = 0;
+			a = 0;
+			w = 1;
+			s = 1;
+			d = 1;
+		}
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left) && a == 1 && d == 1)
+		{
+			dir = 0;
+			a = 0;
+			w = 1;
+			s = 1;
+			d = 1;
+		}
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::W) && w == 1 && s == 1)
+		{
+			dir = 1;
+			a = 1;
+			w = 0;
+			s = 1;
+			d = 1;
+		}
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up) && w == 1 && s == 1)
+		{
+			dir = 1;
+			a = 1;
+			w = 0;
+			s = 1;
+			d = 1;
+		}
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::S) && s == 1 && w == 1)
+		{
+			dir = 3;
+			a = 1;
+			w = 1;
+			s = 0;
+			d = 1;
+		}
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down) && s == 1 && w == 1)
+		{
+			dir = 3;
+			a = 1;
+			w = 1;
+			s = 0;
+			d = 1;
+		}
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::D) && d == 1 && a == 1)
+		{
+			dir = 2;
+			a = 1;
+			w = 1;
+			s = 1;
+			d = 0;
+		}
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right) && d == 1 && a == 1)
+		{
+			dir = 2;
+			a = 1;
+			w = 1;
+			s = 1;
+			d = 0;
+		}
+	}
+	void SetText(int Level_No, int score, int total_score, string playername)
+	{
+		Game_Name.setFont(fonthead);
+		Game_Name.setString("SNAKE XENZIA");
+		Game_Name.setCharacterSize(95);
+		Game_Name.setFillColor(sf::Color::Black);
+		Game_Name.setStyle(sf::Text::Style::Bold);
+		Game_Name.setStyle(sf::Text::Style::Underlined);
+		Game_Name.setOrigin(-550, 0);
+		Player_Name.setFont(font);
+		Player_Name.setString("Name : ");
+		Player_Name.setCharacterSize(70);
+		Player_Name.setFillColor(sf::Color::Black);
+		Player_Name.setStyle(sf::Text::Style::Regular);
+		Player_Name.setOrigin(-1300, -180);
+		Player_Name.setFont(font);
+		const char* cs = playername.c_str();
+		Player_Name_Name.setFont(font);
+		Player_Name_Name.setString(cs);
+		Player_Name_Name.setCharacterSize(70);
+		Player_Name_Name.setFillColor(sf::Color::Red);
+		Player_Name_Name.setStyle(sf::Text::Style::Bold);
+		Player_Name_Name.setOrigin(-1550, -180);
+		Player_Name_Name.setFont(font);
+		Cur_Level.setFont(font);
+		Cur_Level.setString("Level : ");
+		Cur_Level.setCharacterSize(70);
+		Cur_Level.setFillColor(sf::Color::Black);
+		Cur_Level.setStyle(sf::Text::Style::Regular);
+		Cur_Level.setOrigin(-1300, -280);
+		Cur_Level.setFont(font);
+		Cur_Level_No.setFont(font);
+		Cur_Level_No.setString(to_string(Level_No));
+		Cur_Level_No.setCharacterSize(70);
+		Cur_Level_No.setFillColor(sf::Color::Red);
+		Cur_Level_No.setStyle(sf::Text::Style::Bold);
+		Cur_Level_No.setOrigin(-1550, -280);
+		Cur_Level_No.setFont(font);
+		Cur_Level_Score.setFont(font);
+		Cur_Level_Score.setString("Level Score : ");
+		Cur_Level_Score.setCharacterSize(70);
+		Cur_Level_Score.setFillColor(sf::Color::Black);
+		Cur_Level_Score.setStyle(sf::Text::Style::Regular);
+		Cur_Level_Score.setOrigin(-1300, -380);
+		Cur_Level_Score_No.setFont(font);
+		Cur_Level_Score_No.setString(to_string(score));
+		Cur_Level_Score_No.setCharacterSize(70);
+		Cur_Level_Score_No.setFillColor(sf::Color::Red);
+		Cur_Level_Score_No.setStyle(sf::Text::Style::Bold);
+		Cur_Level_Score_No.setOrigin(-1760, -380);
+		Player_High_Score.setFont(font);
+		Player_High_Score.setString("Total Score : ");
+		Player_High_Score.setCharacterSize(70);
+		Player_High_Score.setFillColor(sf::Color::Black);
+		Player_High_Score.setStyle(sf::Text::Style::Regular);
+		Player_High_Score.setOrigin(-1300, -480);
+		Player_High_Score_No.setFont(font);
+		Player_High_Score_No.setString(to_string(total_score));
+		Player_High_Score_No.setCharacterSize(70);
+		Player_High_Score_No.setFillColor(sf::Color::Red);
+		Player_High_Score_No.setStyle(sf::Text::Style::Bold);
+		Player_High_Score_No.setOrigin(-1760, -480);
+		Pause_Game.setFont(font);
+		Pause_Game.setString("Pause Game (Space)");
+		Pause_Game.setCharacterSize(35);
+		Pause_Game.setFillColor(sf::Color::Blue);
+		Pause_Game.setStyle(sf::Text::Style::Italic);
+		Pause_Game.setOrigin(-1300, -580);
+		UnPause_Game.setFont(font);
+		UnPause_Game.setString("continue Game (C)");
+		UnPause_Game.setCharacterSize(35);
+		UnPause_Game.setFillColor(sf::Color::Blue);
+		UnPause_Game.setStyle(sf::Text::Style::Italic);
+		UnPause_Game.setOrigin(-1300, -630);
+		Exit.setFont(font);
+		Exit.setString("Back To Menu (B)");
+		Exit.setCharacterSize(35);
+		Exit.setFillColor(sf::Color::Blue);
+		Exit.setStyle(sf::Text::Style::Regular);
+		Exit.setOrigin(-1300, -700);
+	}
+	void AssignBody(int num)
+	{
+		for (int i = num; i > 0; i--)
+		{
+			if (i > 1)
+			{
+				B[i].x = B[i - 1].x;
+				B[i].y = B[i - 1].y;
+			}
+			else
+			{
+				B[1].y = S.y;
+				B[1].x = S.x;
+			}
+		}
+	}
+	int Gameplay(int Max_Score, int time_in_milliseconds, int Level_No, string playername, int &score, int total_score)
+	{	
+		int Prev_Score = score, I = 1, num = 1;
+		bool win;
+		score = 0;
+		AssignFont();
+		AssignAppleColor();
+		AssignSnakeColor();
+		AssignBackColor();
+		SetAttributes();
+		sf::RenderWindow window(sf::VideoMode(1920, 1000), "SNAKE XENZIA", sf::Style::Close | sf::Style::Resize);
+		while (window.isOpen())
+		{
+			Delay(time_in_milliseconds);
+			sf::Event evnt;
+			while (window.pollEvent(evnt))
+			{
+				switch (evnt.type)
+				{
+				case sf::Event::Closed:
+					window.close();
+					break;
+				}
+			}
+			if (score >= Max_Score)
+			{
+				window.close();
+				cout << "\nYou won this level!!!";
+				cout << endl;
+				cout << "\nCongrats!";
+				return 1;
+			}
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::C))
+				p = 0;
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
+				p = 1;
+			if (p == 1)
+				continue;
+			KeyPressChecker();
+			if (S.x == X && S.y == Y)
+			{
+				srand(time(0));
+				X = (rand() % 29) + 5;
+				Y = (rand() % 10) + 5;
+				Apple_Shape.setPosition(X, Y);
+				score++;
+				if (score > Prev_Score)
+					total_score++;
+				num++;
+			}
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::B))
+			{
+				window.close();
+				return 2;
+			}
+			AssignBody(num);
+			Move_Snake();
+			if (num > 3)
+			{
+				for (int i = 4; i < num; i++)
+				{
+					if (S.x == B[i].x && S.y == B[i].y)
+					{
+						window.close();
+						cout << "\nYou lost";
+						Delay(2000);
+						return 0;
+					}
+				}
+			}
+			if (I == 1)
+			{
+				Snake_Head.setPosition(500, 500);
+				I++;
+			}
+			Snake_Head_Loc = Snake_Head.getPosition();
+			win = Collision_Detection();
+			if (win == 0)
+			{
+				window.close();
+				cout << "\nYou lost this level";
+				cout << "\nPlease restart to try again";
+				Delay(3000);
+				return 0;
+			}
+			Apple_Shape.setPosition(X * sizex, Y * sizey);
+			SetText(Level_No, score, total_score, playername);
+			window.clear(sf::Color::White);
+			window.draw(Back_Image);
+			window.draw(Fore_Image);
+			window.draw(Up_Border);
+			window.draw(Down_Border);
+			window.draw(Left_Border);
+			window.draw(Right_Border);
+			Snake_Head.setPosition(sizex * S.x, sizey * S.y);
+			sf::Vector2f vec = Snake_Head.getPosition();
+			cout << vec.x;
+			cout << endl;
+			cout << vec.y;
+			cout << endl;
+			window.draw(Snake_Head);
+			window.draw(Apple_Shape);
+			for (int i = 1; i < num; i++)
+			{
+				Snake_Body.setPosition(sizex * B[i].x, sizey * B[i].y);
+				window.draw(Snake_Body);
+			}
+			window.draw(Game_Name);
+			window.draw(Cur_Level);
+			window.draw(Cur_Level_No);
+			window.draw(Cur_Level_Score);
+			window.draw(Cur_Level_Score_No);
+			window.draw(Player_Name);
+			window.draw(Player_Name_Name);
+			window.draw(Player_High_Score);
+			window.draw(Player_High_Score_No);
+			window.draw(Pause_Game);
+			window.draw(UnPause_Game);
+			window.draw(Exit);
+			window.display();
+		}
+	}
+	int Scoreboard()
+	{
+		ifstream plin("store_info1.dat", ios::binary);
+		int highscore = 0;
+		system("cls");
+		cout << "\n\tWelcome to the ScoreBoard!!";
+		cout << endl;
+		cout << "\n\tHere are the scores sorted based on the High Score of each players";
+		cout << endl;
+		cout << "\n\t===================================================================================";
+		cout << endl;
+		cout << "\n\tPLAYER NAME          \t|\tHIGH SCORE          \t|\tLAST LEVEL PASSED   \t|\t";
+		cout << endl;
+		cout << "\n\t===================================================================================";
+		cout << endl;
+		plin.read((char*)& scoreboard, sizeof(scoreboard));
+		while (!plin.eof())
+		{
+			for (int j = 0; j < 10; j++)
+			{
+				highscore += scoreboard.score[j];
+			}
+			cout << "\t" << scoreboard.name << "\t\t\t\t" << highscore << "\t\t\t" << scoreboard.level - 1 << endl;
+			highscore = 0;
+			plin.read((char*)& scoreboard, sizeof(scoreboard));
+		}
+		cout << endl;
+		cout << "\nPress any key to restart";
+		_getch();
+		plin.close();
+		return 2;
+	}
+	int Settings()
+	{
+		char ch, ch1, ch2, ch3;
+		system("cls");
+		cout << endl;
+		cout << "\nWelcome to the settings";
+		cout << endl;
+		cout << "\nChoose What you want to change";
+		cout << "\n 1. Change Snake Color";
+		cout << endl;
+		cout << "\n 2. Change Game Background";
+		cout << endl;
+		cout << "\n 3. Change Font";
+		cout << endl;
+		cout << "\n 4. Change Apple";
+		cout << endl;
+		cout << "\n 5. Back to Main Menu";
+		cout << endl;
+		cin >> ch;
+		if (ch == '1')
+		{
+			system("cls");
+			cout << endl;
+			cout << "\nChoose the Color You Want The Snake To Be";
+			cout << endl;
+			cout << "\n1. Blue";
+			cout << endl;
+			cout << "2. Green";
+			cout << endl;
+			cout << "3. Red";
+			cout << endl;
+			cout << "4. Yellow";
+			cout << endl;
+			cout << "5. Purple";
+			cout << endl;
+			cin >> ch1;
+			switch (ch1)
+			{
+			case '1':
+				Snake_Color = "B";
+				break;
+			case '2':
+				Snake_Color = "G";
+				break;
+			case '3':
+				Snake_Color = "R";
+				break;
+			case '5':
+				Snake_Color = "P";
+				break;
+			case '4':
+				Snake_Color = "Y";
+				break;
+			default: cout << "\nOption Does Not Exist";
+			}
+			cout << endl;
+			cout << "\nChanged Successfully\n";
+			return 1;
+		}
+		else if (ch == '2')
+		{
+			system("cls");
+			cout << endl;
+			cout << "\nChoose The Background";
+			cout << endl;
+			cout << "\n1. Default";
+			cout << endl;
+			cout << "2. Green";
+			cout << endl;
+			cout << "3. Night";
+			cout << endl;
+			cout << "4. Jungle";
+			cout << endl;
+			cin >> ch2;
+			switch (ch2)
+			{
+			case '1':
+				Back_Color = "D";
+				break;
+			case '2':
+				Back_Color = "G";
+				break;
+			case '3':
+				Back_Color = "N";
+				break;
+			case '4':
+				Back_Color = "J";
+				break;
+			default:cout << "\nOption Does Not Exist";
+			}
+			cout << endl;
+			cout << "\nChanged Successefully\n";
+			return 1;
+		}
+		else if (ch == '3')
+		{
+			system("cls");
+			cout << endl;
+			cout << "\nChoose The Font";
+			cout << endl;
+			cout << "\n1. Roboto";
+			cout << endl;
+			cout << "2. Arial";
+			cout << endl;
+			cout << "3. TimesNewRoman";
+			cout << endl;
+			cout << "4. Consola";
+			cout << endl;
+			cout << "5. Calibri";
+			cout << endl;
+			cin >> ch3;
+			switch (ch3)
+			{
+			case '1':
+				Font_Type = "Roboto";
+				break;
+			case '2':
+				Font_Type = "Arial";
+				break;
+			case '3':
+				Font_Type = "TimesNewRoman";
+				break;
+			case '4':
+				Font_Type = "Consola";
+				break;
+			case '5':
+				Font_Type = "Calibri";
+				break;
+			default:cout << "Option Does Not Exist";
+			}
+			cout << endl;
+			cout << "\nChanged Successefully\n";
+			return 1;
+		}
+		else if (ch == '4')
+		{
+			system("cls");
+			cout << endl;
+			cout << "\nChoose The Color of the Apple";
+			cout << endl;
+			cout << "\n1. Red";
+			cout << endl;
+			cout << "2. Green";
+			cout << endl;
+			cout << "3. Yellow";
+			cout << endl;
+			cout << "4. Black";
+			cout << endl;
+			cin >> ch1;
+			switch (ch1)
+			{
+			case '1':
+				Apple_Color = "R";
+				break;
+			case '2':
+				Apple_Color = "G";
+				break;
+			case '3':
+				Apple_Color = "Y";
+				break;
+			case '4':
+				Apple_Color = "B";
+				break;
+			default:cout << "\nOption Does Not Exist";
+			}
+			cout << endl;
+			cout << "\nChanged Successefully\n";
+			return 1;
+		}
+		else if (ch == '5')
+		{
+			return 1;
+		}
+		else return 1;
+	}
+};
+int Game_Play_Manip(Player &playing)
+{
+	int cur_level, result, score = 0, result_last = 0, Total_Score;
+	Snake_Game obj;
+	do
+	{	
+		Total_Score = 0;
+		cur_level = playing.level;
+		for (int j = 0; j < 10; j++)
+		{
+			Total_Score += playing.score[j];
+		}
+		score = playing.score[cur_level - 1];
+		switch(cur_level)
+		{
+			case 1: result = obj.Gameplay(10, 95, 1, playing.name, score, Total_Score);
+				break;
+			case 2: result = obj.Gameplay(12, 80, 2, playing.name, score, Total_Score);
+				break;
+			case 3: result = obj.Gameplay(14, 75, 3, playing.name, score, Total_Score);
+				break;
+			case 4: result = obj.Gameplay(16, 65, 4, playing.name, score, Total_Score);
+				break;
+			case 5: result = obj.Gameplay(18, 55, 5, playing.name, score, Total_Score);
+				break;
+			case 6: result = obj.Gameplay(20, 45, 6, playing.name, score, Total_Score);
+				break;
+			case 7: result = obj.Gameplay(22, 40, 7, playing.name, score, Total_Score);
+				break;
+			case 8: result = obj.Gameplay(24, 35, 8, playing.name, score, Total_Score);
+				break;
+			case 9: result = obj.Gameplay(26, 30, 9, playing.name, score, Total_Score);
+				break;
+			case 10: result_last = obj.Gameplay(28, 25, 10, playing.name, score, Total_Score);
+				break;
+		}
+		if (result == 1)
+		{
+			playing.level++;
+		}
+		playing.score[cur_level - 1] = score;
+		if (result == 2 || result_last == 2)
+		{
+			return 2;
+		}
+		if (result_last == 1)
+		{
+			return 1;
+		}
+	} while (result == 1 && cur_level <= 10);
+	if (result == 0)
+	{
+		cout << "you lost the level please try again.";
+		return 0;
+	}
+}
+int main()
+{
+	int  ch, result = 0, win, cur_level, temp, Pre_Player_Loc;
+	string name;
+	bool var;
+	Snake_Game obj;
+	do
+	{
+		system("cls");
+		cout << "\t\t\t\t****************\n";
+		cout << "\t\t\t\t  SNAKE XENZIA\n";
+		cout << "\t\t\t\t****************\n\n";
+		cout << "\t\t\t\tPLAY GAME(1)\n";
+		cout << "\t\t\t\tSETTINGS(2)\n";
+		cout << "\t\t\t\tSCORE BOARD(3)\n";
+		cout << "\t\t\t\tQUIT(4)\n";
+		cin >> ch;
+		win = 0;
+		var = 0;
+		temp = sizeof(playing);
+		ifstream plin;
+
+		fstream update;
+		switch (ch)
+		{
+		case 1: name = obj.Player_Input();
+				plin.open("store_info1.dat", ios::binary);
+				var = 0;
+				plin.seekg(0);
+				for (int i = 1; var == 0; i++)
+				{
+					plin.read((char*)& playing, sizeof(playing));
+					if (name == playing.name)
+					{
+						var = 1;
+						Pre_Player_Loc = i;
+					}
+				}
+				plin.close();
+				result = Game_Play_Manip(playing);
+				update.open("store_info1.dat", ios::binary | ios::out | ios::in);
+				update.seekp(temp*(Pre_Player_Loc - 1), ios::beg);
+				update.write((char*)&playing, sizeof(playing));
+				update.close();
+				break;
+		case 2: result = obj.Settings();
+				break;
+		case 3: obj.Scoreboard();
+				break;
+		case 4: result = 0;
+				break;
+		default: cout << "\nSuch option does not exit";
+		}
+		update.close();
+		
+	} while (ch != 4);
+	cout << "Thank You For Playing Snake Xenzia";
+	cout << endl;
+	obj.Delay(1000000);
+	return 0;
+
+}

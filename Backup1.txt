@@ -1,0 +1,456 @@
+#include"header.h"
+struct player
+{
+	string name;
+	int level = 1;
+	string password;
+}player_info;
+////#include"TestClass.h"
+////
+////int main()
+////{
+////	TestClass obj;
+////	cout << obj.adder(1, 2);
+////	int i = 1;
+////	sf::RenderWindow window(sf::VideoMode(1920, 1080), "Pong");
+////	sf::RectangleShape player(sf::Vector2f(150.0f, 150.0f));
+////	player.setFillColor(sf::Color::Blue);
+////	player.setOrigin(50.0f, 50.0f);
+////	sf::Texture tex;
+////	sf::Sprite cartoon;
+////
+////	using namespace std;
+////	int j = 1;
+////
+////	sf::Event event;
+////	while (window.isOpen())
+////	{
+////		cout << i << endl;
+////		i++;
+////		//string obj;
+////		//obj = to_string(j);
+////		//string image = "snapshot" + obj + ".jpg";
+////		//cartoon.setOrigin(-100.0f,- 500.0f);
+////		//char* cstr1 = &image[0u];
+////		//assert(tex.loadFromFile(cstr1));
+////		//cartoon.setTexture(tex);
+////		//while (window.pollEvent(event))
+////		//{
+////		//	if (event.type == sf::Event::Closed)
+////		//		window.close();
+////		//}
+////		//window.clear();
+////		//window.draw(cartoon);
+////		//std::cout << i << std::endl;
+////		//i++;
+////		//if (i % 2 == 0)
+////		//	j++;
+////		//if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
+////		//{
+////		//	player.move(-0.1f, 0.0f);
+////		//}		
+////		//if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
+////		//{
+////		//	player.move(0.0f, -0.1f);
+////		//}
+////		//if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
+////		//{
+////		//	player.move(0.0f, 0.1f);
+////		//}
+////		//if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
+////		//{
+////		//	player.move(0.1f, 0.0f);
+////		//}
+////		////window.clear();
+////		//if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
+////		//{
+////		//	sf::Vector2i mousePos = sf::Mouse::getPosition(window);
+////		//	player.setPosition((float)mousePos.x, static_cast<float>(mousePos.y));
+////		}
+////		//window.draw(player);
+////
+////	return 0;
+////}
+////int main1()
+////{
+////	sf::RenderWindow window(sf::VideoMode(512, 512), "SFML TUTORIAL", sf::Style::Close | sf::Style::Resize);
+////	sf::RectangleShape player(sf::Vector2f(150.0f, 150.0f));
+////	player.setFillColor(sf::Color::Blue);
+////	player.setOrigin(50.0f, 50.0f);
+////	/*sf::Texture playerTexture;
+////	playerTexture.loadFromFile("textures/tuxpng.png");
+////	player.setTexture(&playerTexture);
+////	sf::Vector2u texturesize = playerTexture.getSize();
+////	texturesize.x /= 3;
+////	texturesize.y /= 9;
+////	player.setTextureRect(sf::IntRect(texturesize.x * 2, texturesize.y * 8, texturesize.x, texturesize.y));*/
+////	while (window.isOpen())
+////	{
+////		sf::Event evnt;
+////		while (window.pollEvent(evnt))
+////		{
+////			switch (evnt.type)
+////			{
+////			case sf::Event::Closed:
+////				window.close();
+////				break;
+////			case sf::Event::Resized:
+////				printf("new window width : %i new window height : %i", evnt.size.width, evnt.size.height);
+////				break;
+////			case sf::Event::TextEntered:
+////				if (evnt.text.unicode < 128)
+////				{
+////					printf("%c", evnt.text.unicode);
+////				}
+////			}
+////		}
+////		if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
+////		{
+////			player.move(-0.6f, 0.0f);
+////		}		
+////		if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
+////		{
+////			player.move(0.0f, -0.1f);
+////		}
+////		if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
+////		{
+////			player.move(0.0f, 0.1f);
+////		}
+////		if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
+////		{
+////			player.move(0.1f, 0.0f);
+////		}
+////		if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
+////		{
+////			sf::Vector2i mousePos = sf::Mouse::getPosition(window);
+////			player.setPosition((float)mousePos.x, (float)(mousePos.y));
+////		}
+////		window.clear();
+////		window.draw(player);
+////		window.display();
+////	}
+////
+////	return 0;
+////}
+//struct player
+//{
+//	string name="";
+//	int level = 1;
+//	string password="";
+//}player_info;
+//int level1()
+//{
+//	return 1;
+//}
+//int level2()
+//{
+//	return 1;
+//}
+//int level3()
+//{
+//	return 1;
+//}
+//int level4()
+//{
+//	return 1;
+//}
+//string player_data_input()
+//{
+//	string pname;
+//	fstream plin;
+//	plin.open("store_info.dat", ios::binary | ios::out);
+//	cout << "Enter name of the player-\n";
+//	cin >> pname;
+//	plin.open("store_info.dat", ios::binary | ios::in);
+//	plin.read((char*)& player_info, sizeof(player_info));
+//	if (pname == player_info.name)
+//	{
+//		cout << "Player name already exist";
+//		return pname;
+//	}
+//	else
+//	{
+//		cout << "\nName saved";
+//		player_info.name = pname;
+//		plin.open("store_info.dat", ios::binary | ios::out);
+//		plin.write((char*)& player_info, sizeof(player_info));
+//		return pname;
+//	}
+//	plin.close();
+//	//enter the player name
+//	//check whether it is an old usera
+//	//if not make a new user
+//	//start the game
+//}
+//void play_game(string player_name)
+//{
+//	int cur_level;
+//	player playing;
+//	fstream plin;
+//	bool var = 0;
+//	plin.open("store_info.dat", ios::binary | ios::in);
+//
+//	for (; var == 0;)
+//	{
+//		plin.read((char*)& playing, sizeof(playing));
+//		if (player_name == playing.name)
+//		{
+//			cur_level = playing.level;
+//			var = 1;
+//		}
+//		else
+//		{
+//			continue;
+//		}
+//	}
+//	bool result = 1;
+//	switch (cur_level)
+//	{
+//	case 1:
+//		result = level1();
+//		break;
+//	case 2:
+//		result = level2();
+//		break;
+//	case 3:
+//		level3();
+//		break;
+//		//case 4: level4();
+//		//	break;
+//		//case 5: level5();
+//		//	break;
+//		//case 6: level6();
+//		//	break;
+//		//case 7: level7();
+//		//	break;
+//		//case 8: level8();
+//		//	break;
+//		//case 9: level9();
+//		//	break;
+//		//case 10: level10();
+//		//	break;
+//	default: cout << "THE END!!!";
+//	}
+//	if (result == 1)
+//	{
+//		playing.level++;
+//		plin.seekg(-52, ios::cur);
+//		plin.write((char*)& playing, sizeof(playing));
+//	}
+//	plin.close();
+//}
+//
+//void menu()
+//{
+//	int  ch;
+//	cout << "\t\t\t***************\n";
+//	cout << "\t\t\tSNAKE XENSIA\n";
+//	cout << "\t\t\t****************";
+//	cout << "\n\n\t\tPLAY GAME(1)";
+//	cout << "\n\t\t\tSETTINGS(3)";
+//	cout << "\n\t\t\tSCORE BOARD(4)";
+//	cout << "\n\t\t\tQUIT(5)";
+//}
+//int main()
+//{
+//	player test;
+//	//string name;
+//	//name = player_data_input();
+//	////play_game(name);
+//	//ifstream fin("bin.dat", ios::binary);
+//	stirng name;
+//	fstream fout("bin1.dat", ios::binary | ios::out);
+//	fout.seekp(0, ios::beg);
+//	cout << fout.tellp();
+//	cin >> player_info.name;
+//	fout.write((char*)&player_info, sizeof(player_info));
+//	cin >> player_info.name;
+//	fout.write((char*)&player_info, sizeof(player_info));
+//	cin >> player_info.name;
+//	fout.write((char*)&player_info, sizeof(player_info));
+//	cin >> player_info.name;
+//	fout.write((char*)&player_info, sizeof(player_info));
+//	cout << fout.tellp();//240
+//	fout.seekp(-60, ios::cur);
+//	cout << fout.tellp();
+//	cin >> player_info.name;
+//
+//	fout.write((char*)&player_info, sizeof(player_info));
+//	//fout.close();
+//	//ifstream fin("bin1.dat", ios::binary);
+//	fout.open("bin1.dat", ios::binary | ios::in );
+//	fout.seekg(180, ios::beg);
+//	fout.read((char*)&player_info, sizeof(player_info));
+//	cout << player_info.name;
+//	cout << fout.tellp();
+//
+//	//fin.seekg(60, ios::cur);
+//	//fin.seekg(60, ios::cur);
+//	//fin.read((char*)&test, sizeof(test));
+//	//cout << test.name;
+//	//cout << fin.tellg();
+//
+//	_getch();
+//	return 0;
+//}
+int level1()
+{
+	return 1;
+}
+int level2()
+{
+	return 1;
+}
+int level3()
+{
+	return 1;
+}
+int level4()
+{
+	return 1;
+}
+string player_data_input()
+{
+	string pname;
+	ofstream plout("store_info1.dat", ios::binary | ios::app);
+	ifstream plin("store_info1.dat", ios::binary);
+	bool var = 0;
+	cout << "Enter name of the player-\n";
+	cin >> pname;
+	for(int i=0;i<15;i++)
+	{
+		plin.read((char*)& player_info, sizeof(player_info));
+		if (pname == player_info.name)
+		{
+			cout << "player exists";
+			return pname;
+			var = 1;
+		}
+	}
+	if(var==0)
+	{
+		player_info.name = pname;
+		plout.write((char*) &player_info, sizeof(player_info));
+		cout << "\nName saved ";
+		return pname;
+	}
+	plin.close();
+}
+void play_game(string player_name)
+{
+	int cur_level;
+	player playing;
+	fstream plin;
+	bool var = 0;
+	plin.open("store_info1.dat", ios::binary | ios::in);
+
+	for (; var == 0;)
+	{
+		plin.read((char*)& playing, sizeof(playing));
+		if (player_name == playing.name)
+		{
+			var = 1;
+		}
+	}
+	bool result = 1;
+	do
+	{
+		cur_level = playing.level;
+		switch (cur_level)
+		{
+		case 1:
+			result = level1();
+			cout << "you won the first level";
+			break;
+		case 2:
+			result = level2();
+			cout << "you won the second level";
+			break;
+		case 3:
+			result = level3();
+			cout << "you won the third level";
+			break;
+			//case 4: level4();
+			//	break;
+			//case 5: level5();
+			//	break;
+			//case 6: level6();
+			//	break;
+			//case 7: level7();
+			//	break;
+			//case 8: level8();
+			//	break;
+			//case 9: level9();
+			//	break;
+			//case 10: level10();
+			//	break;
+		default: cout << "THE END!!!";
+			break;
+		}
+		if (result == 1)
+		{
+			playing.level++;
+			int temp;
+			temp = sizeof(playing);
+			plin.seekp(-1 * temp, ios::cur);
+			plin.write((char*)& playing, sizeof(playing));
+		}
+	}while (result == 1);
+}
+void menu()
+{
+	int  ch;
+	cout << "\t\t\t\t***************\n";
+	cout << "\t\t\t\tSNAKE XENSIA\n";
+	cout << "\t\t\t\t****************\n\n";
+	cout << "\t\t\t\tPLAY GAME(1)\n";
+	cout << "\t\t\t\tSETTINGS(2)\n";
+	cout << "\t\t\t\tSCORE BOARD(3)\n";
+	cout << "\t\t\t\tQUIT(4)\n";
+	cin >> ch;
+	switch (ch)
+	{
+	case 1:	player_data_input();
+		break;
+		/*case 2: settings();
+			break;
+		case 3: scoreboard();*/
+		break;
+	case 4: exit(0);
+		break;
+	default: cout << "Such option does not exit";
+	}
+
+}
+void scoreboard()
+{
+	fstream plin;
+	plin.open("store_info.dat", ios::binary | ios::in);
+	player score;
+
+}
+void settings()
+{
+	cout << "A";
+}
+int test()
+{
+	int a;
+	cin >> a;
+	if (a == 0)
+	{
+		return a;
+	}
+	else return 0;
+}
+int main()
+{
+	string name;
+	//menu();
+	int temp = 1;
+	int temp1=0;
+	name = player_data_input();
+	play_game(name);
+	_getch();
+	return 0;
+}

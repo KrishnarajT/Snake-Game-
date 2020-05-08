@@ -1,0 +1,2030 @@
+#include "Header.h"
+#include <cassert>
+#include"header.h"
+struct players
+{
+	string name;
+	int level = 1;
+	string password;
+}player_info;
+
+//sf::RectangleShape border1(sf::Vector2f(1000.0f, 25.0f));
+//sf::RectangleShape border2(sf::Vector2f(1000.0f, 25.0f));
+//sf::RectangleShape border3(sf::Vector2f(25.0f, 525.0f));
+//sf::RectangleShape border4(sf::Vector2f(25.0f, 525.0f));
+//sf::RectangleShape player(sf::Vector2f(40.0f, 40.0f));
+//sf::RectangleShape player1(sf::Vector2f(40.0f, 40.0f));
+//sf::RectangleShape Apple(sf::Vector2f(30.0f, 30.0f));
+//sf::Texture tex;
+//sf::Texture tex1;
+//sf::Texture apple;
+//sf::Texture snake;
+//sf::Sprite back_img;
+//sf::Sprite frimg;
+//sf::Vector2f B1_loc, B2_loc, B3_loc, B4_loc, player_loc, player1_loc, Apple_loc;
+int X=15, Y=15;
+void Assign_random(sf::Vector2f &Loc)
+{
+	bool b = 0;
+
+		//value must be from 525 to 1460
+		//value must be from 275 to 7Width
+		srand(time(0));
+		X = (rand() % 935) + 525;
+		Y = (rand() % 425) + 275;
+	Loc.x = X;
+	Loc.y = Y;
+}
+void detect_input(int  &tempa, int &tempw, int &temps, int &tempd, int &a, int &w, int &s, int &d)
+{
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::A) && tempa == 1 )
+	{
+		a = 1;
+		tempa = 0;
+	}
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::W) && tempw == 1)
+	{
+		w = 1;
+		tempw = 0;
+		
+	}
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::S) && temps == 1 )
+	{
+		s = 1;
+		
+		temps = 0;
+	}
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::D) && tempd == 1)
+	{
+			
+		d = 1;
+		
+		tempd = 0 ;
+	}
+
+}
+void change_dir(int  &tempa, int &tempw, int &temps, int &tempd, int &a, int &w, int &s, int &d, int int_x, int int_y, int Width, sf::Texture &snake)
+{
+	if (tempa == 0 && int_y % Width == 0)
+	{
+		snake.loadFromFile("snakeL.png");
+		w = 0;
+		s = 0;
+		d = 0;
+		tempa = 2;
+		tempw = 1;
+		temps = 1;
+		tempd = 1;
+	}
+	if (tempw == 0 && int_x % Width == 0)
+	{
+		snake.loadFromFile("snakeU.png");
+		s = 0;
+		d = 0;
+		a = 0;
+		tempw = 2;
+		tempa = 1;
+		temps = 1;
+		tempd = 1;
+	}
+	if (temps == 0 && int_x % Width == 0)
+	{
+		snake.loadFromFile("snakeD.png");
+		a = 0;
+		w = 0;
+		d = 0;
+		tempa = 1;
+		tempw = 1;
+		tempd = 1;
+		temps = 2;
+	}
+	if (tempd==0 && int_y % Width == 0)
+	{
+		snake.loadFromFile("snake.png");
+		a = 0;
+		w = 0;
+		s = 0;
+		tempa = 1;
+		tempw = 1;
+		temps = 1;
+		tempd = 2;
+	}
+}
+void Apple_collision_detector(int &score, sf::Vector2f player_loc, sf::Vector2f &Apple_loc)
+{
+	if (player_loc.x <= Apple_loc.x + 40 && (player_loc.x + 40) >= Apple_loc.x)
+	{
+		if (player_loc.y <= Apple_loc.y + 40 && (player_loc.y + 40) >= Apple_loc.y)
+		{
+			//cout << "collision occured";
+			Assign_random(Apple_loc);
+			score++;
+			cout << endl;
+			cout << score;
+			//player1b = 1;
+		}
+	}
+}
+bool Collision_Detector(sf::Vector2f player_loc, sf::Vector2f B1_loc , sf::Vector2f B2_loc, sf::Vector2f B3_loc, sf::Vector2f B4_loc)
+{
+	if (player_loc.x <= (B3_loc.x+25))
+	{
+		return 1;
+		//cout << "collision Detected";
+	}
+	else if ((player_loc.x+40) >= B4_loc.x)
+	{
+		return 1;
+		//cout << "collision Detected";
+	}
+	else if ((player_loc.y) <= (B1_loc.y+25))
+	{
+		return 1;
+		//cout << "collision Detected";
+	}
+	else if ((player_loc.y + 40) >= (B2_loc.y))
+	{
+		return 1;
+		//cout << "collision Detected";
+	}
+	else return 0;
+}
+int level1()
+{
+	sf::RectangleShape border1(sf::Vector2f(1000.0f, 25.0f));
+	sf::RectangleShape border2(sf::Vector2f(1000.0f, 25.0f));
+	sf::RectangleShape border3(sf::Vector2f(25.0f, 525.0f));
+	sf::RectangleShape border4(sf::Vector2f(25.0f, 525.0f));
+	sf::RectangleShape player(sf::Vector2f(40.0f, 40.0f));
+	sf::RectangleShape player1(sf::Vector2f(40.0f, 40.0f));
+	sf::RectangleShape Apple(sf::Vector2f(30.0f, 30.0f));
+	sf::Texture tex;
+	sf::Texture tex1;
+	sf::Texture apple;
+	sf::Texture snake;
+	sf::Sprite back_img;
+	sf::Sprite frimg;
+	sf::Vector2f B1_loc, B2_loc, B3_loc, B4_loc, player_loc, player1_loc, Apple_loc;
+	float speed = 0.5f;
+	int Max_score=10;
+	sf::RenderWindow window(sf::VideoMode(1920, 1000), "SFML TUTORIAL", sf::Style::Close | sf::Style::Resize);
+	int a = 0, w = 0, s = 0, d = 1, tempa = 1, tempw = 1, temps = 1, tempd = 0;
+	int score = 0;
+	int Width = 30;
+	bool player1b = 0;
+	bool collision = 0;
+	apple.loadFromFile("apple3.png");
+	snake.loadFromFile("snake.png");
+	assert(tex.loadFromFile("back.jpg"));
+	assert(tex1.loadFromFile("backimg.png"));
+	back_img.setTexture(tex);
+	frimg.setTexture(tex1);
+	player_loc.x = 600.0f;
+	player_loc.y = 600.0f;
+	Apple_loc.x = 700.0f;
+	Apple_loc.y = 700.0f;
+	B1_loc.x = 500.0f;
+	B1_loc.y = 250.0f;
+	B2_loc.x = 525.0f;
+	B2_loc.y = 750.0f;
+	B3_loc.x = 500.0f;
+	B3_loc.y = 250.0f;
+	B4_loc.x = 1500.0f;
+	B4_loc.y = 250.0f;
+	Apple.setTexture(&apple);
+	player.setTexture(&snake);
+	player.setFillColor(sf::Color::White);
+	player1.setFillColor(sf::Color::Red);
+	Apple.setFillColor(sf::Color::White);
+	border1.setFillColor(sf::Color::Green);
+	border2.setFillColor(sf::Color::Green);
+	border3.setFillColor(sf::Color::Green);
+	border4.setFillColor(sf::Color::Green);
+	frimg.setOrigin(-525.0f, -275.0f);
+	border1.setOrigin(-B1_loc.x, -B1_loc.y);
+	border2.setOrigin(-B2_loc.x, -B2_loc.y);
+	border3.setOrigin(-B3_loc.x, -B3_loc.y);
+	border4.setOrigin(-B4_loc.x, -B4_loc.y);
+	player.setOrigin(-player_loc.x, -player_loc.y);
+	player1.setOrigin(-player_loc.x-25, -player_loc.y-25);
+	Apple.setOrigin(-Apple_loc.x, -Apple_loc.y);
+	while (window.isOpen())
+	{
+		sf::Event evnt;
+		while (window.pollEvent(evnt))
+		{
+			switch (evnt.type)
+			{
+			case sf::Event::Closed:
+				window.close();
+				break;
+			case sf::Event::Resized:
+				//printf("new window width : %i new window height : %i", evnt.size.width, evnt.size.height);
+				break;
+			case sf::Event::TextEntered:
+				if (evnt.text.unicode < 128)
+				{
+					//printf("%c", evnt.text.unicode);
+				}
+			}
+		}
+		int int_x, int_y;
+		int_x=(int)player_loc.x;
+		int_y=(int)player_loc.x;
+		detect_input(tempa, tempw, temps, tempd, a, w, s, d);
+		change_dir(tempa, tempw, temps, tempd, a, w, s, d, int_x, int_y, Width, snake);
+		if (tempa == 2 || a == 1)
+		{
+			player.move(-speed, 0.0f);
+			player_loc.x += -speed;
+			a = 0;
+		}
+		if (tempw == 2 || w == 1)
+		{
+			player.move(0.0f, -speed);
+			//using namespace std::this_thread;
+			//using namespace std::chrono;
+			//sleep_for(milliseconds(150));
+			player_loc.y += -speed;
+			w = 0;
+		}
+		if (temps == 2 || s == 1)
+		{
+			player.move(0.0f, speed);
+			player_loc.y += speed;
+			s = 0;
+		}
+		if (tempd == 2 || d == 1)
+		{
+			player.move(speed, 0.0f);
+			player_loc.x += speed;
+			d = 0;
+		}
+		//Debugging
+		/*if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
+		{
+			sf::Vector2i mousePos = sf::Mouse::getPosition(window);
+			cout << mousePos.x;
+			cout << endl;
+			cout << mousePos.y;
+			cout << endl;
+		}*/
+		/*cout << endl;
+		cout << player_loc.x;
+		cout << endl;
+		cout << player_loc.y;
+		cout << endl;
+		cout << Apple_loc.x;
+		cout << endl;
+		cout << Apple_loc.y;
+		cout << endl;*/
+		player1_loc.x = player_loc.x - 30;
+		player1_loc.y = player_loc.y - 30;
+		player1.setOrigin(-player1_loc.x,- player1_loc.y);
+		Apple_collision_detector(score, player_loc, Apple_loc);
+		Apple.setOrigin(-Apple_loc.x, -Apple_loc.y);
+		collision = Collision_Detector(player_loc, B1_loc, B2_loc, B3_loc, B4_loc);
+		if (collision == 1)
+		{
+			window.close(); return 0;
+		}
+		else if (score == Max_score)
+		{
+			window.close();
+			return 1;
+		}
+		window.clear(sf::Color::White);
+		window.draw(back_img);
+		window.draw(frimg);
+		window.draw(border1);
+		window.draw(border2);
+		window.draw(border3);
+		window.draw(border4);
+		window.draw(player);
+		window.draw(Apple);
+		//window.draw(player1);
+		window.display();
+	}
+}
+int level2()
+{
+	sf::RectangleShape border1(sf::Vector2f(1000.0f, 25.0f));
+	sf::RectangleShape border2(sf::Vector2f(1000.0f, 25.0f));
+	sf::RectangleShape border3(sf::Vector2f(25.0f, 525.0f));
+	sf::RectangleShape border4(sf::Vector2f(25.0f, 525.0f));
+	sf::RectangleShape player(sf::Vector2f(40.0f, 40.0f));
+	sf::RectangleShape player1(sf::Vector2f(40.0f, 40.0f));
+	sf::RectangleShape Apple(sf::Vector2f(30.0f, 30.0f));
+	sf::Texture tex;
+	sf::Texture tex1;
+	sf::Texture apple;
+	sf::Texture snake;
+	sf::Sprite back_img;
+	sf::Sprite frimg;
+	sf::Vector2f B1_loc, B2_loc, B3_loc, B4_loc, player_loc, player1_loc, Apple_loc;
+	float speed = 0.5f;
+	int Max_score = 10;
+	sf::RenderWindow window(sf::VideoMode(1920, 1000), "SFML TUTORIAL", sf::Style::Close | sf::Style::Resize);
+	int a = 0, w = 0, s = 0, d = 1, tempa = 1, tempw = 1, temps = 1, tempd = 0;
+
+	int score = 0;
+	int Width = 30;
+	bool player1b = 0;
+	bool collision = 0;
+	apple.loadFromFile("apple3.png");
+	snake.loadFromFile("snake.png");
+	assert(tex.loadFromFile("back.jpg"));
+	assert(tex1.loadFromFile("backimg.png"));
+	back_img.setTexture(tex);
+	frimg.setTexture(tex1);
+	player_loc.x = 600.0f;
+	player_loc.y = 600.0f;
+	Apple_loc.x = 700.0f;
+	Apple_loc.y = 700.0f;
+	B1_loc.x = 500.0f;
+	B1_loc.y = 250.0f;
+	B2_loc.x = 525.0f;
+	B2_loc.y = 750.0f;
+	B3_loc.x = 500.0f;
+	B3_loc.y = 250.0f;
+	B4_loc.x = 1500.0f;
+	B4_loc.y = 250.0f;
+	Apple.setTexture(&apple);
+	player.setTexture(&snake);
+	player.setFillColor(sf::Color::White);
+	player1.setFillColor(sf::Color::Red);
+	Apple.setFillColor(sf::Color::White);
+	border1.setFillColor(sf::Color::Green);
+	border2.setFillColor(sf::Color::Green);
+	border3.setFillColor(sf::Color::Green);
+	border4.setFillColor(sf::Color::Green);
+	frimg.setOrigin(-525.0f, -275.0f);
+	border1.setOrigin(-B1_loc.x, -B1_loc.y);
+	border2.setOrigin(-B2_loc.x, -B2_loc.y);
+	border3.setOrigin(-B3_loc.x, -B3_loc.y);
+	border4.setOrigin(-B4_loc.x, -B4_loc.y);
+	player.setOrigin(-player_loc.x, -player_loc.y);
+	player1.setOrigin(-player_loc.x - 25, -player_loc.y - 25);
+	Apple.setOrigin(-Apple_loc.x, -Apple_loc.y);
+	while (window.isOpen())
+	{
+		sf::Event evnt;
+		while (window.pollEvent(evnt))
+		{
+			switch (evnt.type)
+			{
+			case sf::Event::Closed:
+				window.close();
+				break;
+			case sf::Event::Resized:
+				//printf("new window width : %i new window height : %i", evnt.size.width, evnt.size.height);
+				break;
+			case sf::Event::TextEntered:
+				if (evnt.text.unicode < 128)
+				{
+					//printf("%c", evnt.text.unicode);
+				}
+			}
+		}
+		int int_x, int_y;
+		int_x = (int)player_loc.x;
+		int_y = (int)player_loc.x;
+		detect_input(tempa, tempw, temps, tempd, a, w, s, d);
+		change_dir(tempa, tempw, temps, tempd, a, w, s, d, int_x, int_y, Width, snake);
+		if (tempa == 2 || a == 1)
+		{
+			player.move(-speed, 0.0f);
+			player_loc.x += -speed;
+			a = 0;
+		}
+		if (tempw == 2 || w == 1)
+		{
+			player.move(0.0f, -speed);
+			//using namespace std::this_thread;
+			//using namespace std::chrono;
+			//sleep_for(milliseconds(150));
+			player_loc.y += -speed;
+			w = 0;
+		}
+		if (temps == 2 || s == 1)
+		{
+			player.move(0.0f, speed);
+			player_loc.y += speed;
+			s = 0;
+		}
+		if (tempd == 2 || d == 1)
+		{
+			player.move(speed, 0.0f);
+			player_loc.x += speed;
+			d = 0;
+		}
+		player1_loc.x = player_loc.x - 30;
+		player1_loc.y = player_loc.y - 30;
+		player1.setOrigin(-player1_loc.x, -player1_loc.y);
+		Apple_collision_detector(score, player_loc, Apple_loc);
+		Apple.setOrigin(-Apple_loc.x, -Apple_loc.y);
+		collision = Collision_Detector(player_loc, B1_loc, B2_loc, B3_loc, B4_loc);
+		if (collision == 1)
+		{
+			window.close(); return 0;
+		}
+		else if (score == Max_score)
+		{
+			window.close();
+			return 1;
+		}
+		window.clear(sf::Color::White);
+		window.draw(back_img);
+		window.draw(frimg);
+		window.draw(border1);
+		window.draw(border2);
+		window.draw(border3);
+		window.draw(border4);
+		window.draw(player);
+		window.draw(Apple);
+		//window.draw(player1);
+		window.display();
+	}
+}
+int level3()
+{
+	sf::RectangleShape border1(sf::Vector2f(1000.0f, 25.0f));
+	sf::RectangleShape border2(sf::Vector2f(1000.0f, 25.0f));
+	sf::RectangleShape border3(sf::Vector2f(25.0f, 525.0f));
+	sf::RectangleShape border4(sf::Vector2f(25.0f, 525.0f));
+	sf::RectangleShape player(sf::Vector2f(40.0f, 40.0f));
+	sf::RectangleShape player1(sf::Vector2f(40.0f, 40.0f));
+	sf::RectangleShape Apple(sf::Vector2f(30.0f, 30.0f));
+	sf::Texture tex;
+	sf::Texture tex1;
+	sf::Texture apple;
+	sf::Texture snake;
+	sf::Sprite back_img;
+	sf::Sprite frimg;
+	sf::Vector2f B1_loc, B2_loc, B3_loc, B4_loc, player_loc, player1_loc, Apple_loc;
+	float speed = 0.5f;
+	int Max_score = 10;
+	sf::RenderWindow window(sf::VideoMode(1920, 1000), "SFML TUTORIAL", sf::Style::Close | sf::Style::Resize);
+	int a = 0, w = 0, s = 0, d = 1, tempa = 1, tempw = 1, temps = 1, tempd = 0;
+
+	int score = 0;
+	int Width = 30;
+	bool player1b = 0;
+	bool collision = 0;
+	apple.loadFromFile("apple3.png");
+	snake.loadFromFile("snake.png");
+	assert(tex.loadFromFile("back.jpg"));
+	assert(tex1.loadFromFile("backimg.png"));
+	back_img.setTexture(tex);
+	frimg.setTexture(tex1);
+	player_loc.x = 600.0f;
+	player_loc.y = 600.0f;
+	Apple_loc.x = 700.0f;
+	Apple_loc.y = 700.0f;
+	B1_loc.x = 500.0f;
+	B1_loc.y = 250.0f;
+	B2_loc.x = 525.0f;
+	B2_loc.y = 750.0f;
+	B3_loc.x = 500.0f;
+	B3_loc.y = 250.0f;
+	B4_loc.x = 1500.0f;
+	B4_loc.y = 250.0f;
+	Apple.setTexture(&apple);
+	player.setTexture(&snake);
+	player.setFillColor(sf::Color::White);
+	player1.setFillColor(sf::Color::Red);
+	Apple.setFillColor(sf::Color::White);
+	border1.setFillColor(sf::Color::Green);
+	border2.setFillColor(sf::Color::Green);
+	border3.setFillColor(sf::Color::Green);
+	border4.setFillColor(sf::Color::Green);
+	frimg.setOrigin(-525.0f, -275.0f);
+	border1.setOrigin(-B1_loc.x, -B1_loc.y);
+	border2.setOrigin(-B2_loc.x, -B2_loc.y);
+	border3.setOrigin(-B3_loc.x, -B3_loc.y);
+	border4.setOrigin(-B4_loc.x, -B4_loc.y);
+	player.setOrigin(-player_loc.x, -player_loc.y);
+	player1.setOrigin(-player_loc.x - 25, -player_loc.y - 25);
+	Apple.setOrigin(-Apple_loc.x, -Apple_loc.y);
+	while (window.isOpen())
+	{
+		sf::Event evnt;
+		while (window.pollEvent(evnt))
+		{
+			switch (evnt.type)
+			{
+			case sf::Event::Closed:
+				window.close();
+				break;
+			case sf::Event::Resized:
+				//printf("new window width : %i new window height : %i", evnt.size.width, evnt.size.height);
+				break;
+			case sf::Event::TextEntered:
+				if (evnt.text.unicode < 128)
+				{
+					//printf("%c", evnt.text.unicode);
+				}
+			}
+		}
+		int int_x, int_y;
+		int_x = (int)player_loc.x;
+		int_y = (int)player_loc.x;
+		detect_input(tempa, tempw, temps, tempd, a, w, s, d);
+  change_dir(tempa, tempw, temps, tempd, a, w, s, d, int_x, int_y, Width, snake);
+		if (tempa == 2 || a == 1)
+		{
+			player.move(-speed, 0.0f);
+			player_loc.x += -speed;
+			a = 0;
+		}
+		if (tempw == 2 || w == 1)
+		{
+			player.move(0.0f, -speed);
+			//using namespace std::this_thread;
+			//using namespace std::chrono;
+			//sleep_for(milliseconds(150));
+			player_loc.y += -speed;
+			w = 0;
+		}
+		if (temps == 2 || s == 1)
+		{
+			player.move(0.0f, speed);
+			player_loc.y += speed;
+			s = 0;
+		}
+		if (tempd == 2 || d == 1)
+		{
+			player.move(speed, 0.0f);
+			player_loc.x += speed;
+			d = 0;
+		}
+		player1_loc.x = player_loc.x - 30;
+		player1_loc.y = player_loc.y - 30;
+		player1.setOrigin(-player1_loc.x, -player1_loc.y);
+		Apple_collision_detector(score, player_loc, Apple_loc);
+		Apple.setOrigin(-Apple_loc.x, -Apple_loc.y);
+		collision = Collision_Detector(player_loc, B1_loc, B2_loc, B3_loc, B4_loc);
+		if (collision == 1)
+		{
+			window.close(); return 0;
+		}
+		else if (score == Max_score)
+		{
+			window.close();
+			return 1;
+		}
+		window.clear(sf::Color::White);
+		window.draw(back_img);
+		window.draw(frimg);
+		window.draw(border1);
+		window.draw(border2);
+		window.draw(border3);
+		window.draw(border4);
+		window.draw(player);
+		window.draw(Apple);
+		//window.draw(player1);
+		window.display();
+	}
+}
+int level4()
+{
+	sf::RectangleShape border1(sf::Vector2f(1000.0f, 25.0f));
+	sf::RectangleShape border2(sf::Vector2f(1000.0f, 25.0f));
+	sf::RectangleShape border3(sf::Vector2f(25.0f, 525.0f));
+	sf::RectangleShape border4(sf::Vector2f(25.0f, 525.0f));
+	sf::RectangleShape player(sf::Vector2f(40.0f, 40.0f));
+	sf::RectangleShape player1(sf::Vector2f(40.0f, 40.0f));
+	sf::RectangleShape Apple(sf::Vector2f(30.0f, 30.0f));
+	sf::Texture tex;
+	sf::Texture tex1;
+	sf::Texture apple;
+	sf::Texture snake;
+	sf::Sprite back_img;
+	sf::Sprite frimg;
+	sf::Vector2f B1_loc, B2_loc, B3_loc, B4_loc, player_loc, player1_loc, Apple_loc;
+	float speed = 0.5f;
+	int Max_score = 10;
+	sf::RenderWindow window(sf::VideoMode(1920, 1000), "SFML TUTORIAL", sf::Style::Close | sf::Style::Resize);
+	int a = 0, w = 0, s = 0, d = 1, tempa = 1, tempw = 1, temps = 1, tempd = 0;
+
+	int score = 0;
+	int Width = 30;
+	bool player1b = 0;
+	bool collision = 0;
+	apple.loadFromFile("apple3.png");
+	snake.loadFromFile("snake.png");
+	assert(tex.loadFromFile("back.jpg"));
+	assert(tex1.loadFromFile("backimg.png"));
+	back_img.setTexture(tex);
+	frimg.setTexture(tex1);
+	player_loc.x = 600.0f;
+	player_loc.y = 600.0f;
+	Apple_loc.x = 700.0f;
+	Apple_loc.y = 700.0f;
+	B1_loc.x = 500.0f;
+	B1_loc.y = 250.0f;
+	B2_loc.x = 525.0f;
+	B2_loc.y = 750.0f;
+	B3_loc.x = 500.0f;
+	B3_loc.y = 250.0f;
+	B4_loc.x = 1500.0f;
+	B4_loc.y = 250.0f;
+	Apple.setTexture(&apple);
+	player.setTexture(&snake);
+	player.setFillColor(sf::Color::White);
+	player1.setFillColor(sf::Color::Red);
+	Apple.setFillColor(sf::Color::White);
+	border1.setFillColor(sf::Color::Green);
+	border2.setFillColor(sf::Color::Green);
+	border3.setFillColor(sf::Color::Green);
+	border4.setFillColor(sf::Color::Green);
+	frimg.setOrigin(-525.0f, -275.0f);
+	border1.setOrigin(-B1_loc.x, -B1_loc.y);
+	border2.setOrigin(-B2_loc.x, -B2_loc.y);
+	border3.setOrigin(-B3_loc.x, -B3_loc.y);
+	border4.setOrigin(-B4_loc.x, -B4_loc.y);
+	player.setOrigin(-player_loc.x, -player_loc.y);
+	player1.setOrigin(-player_loc.x - 25, -player_loc.y - 25);
+	Apple.setOrigin(-Apple_loc.x, -Apple_loc.y);
+	while (window.isOpen())
+	{
+		sf::Event evnt;
+		while (window.pollEvent(evnt))
+		{
+			switch (evnt.type)
+			{
+			case sf::Event::Closed:
+				window.close();
+				break;
+			case sf::Event::Resized:
+				//printf("new window width : %i new window height : %i", evnt.size.width, evnt.size.height);
+				break;
+			case sf::Event::TextEntered:
+				if (evnt.text.unicode < 128)
+				{
+					//printf("%c", evnt.text.unicode);
+				}
+			}
+		}
+		int int_x, int_y;
+		int_x = (int)player_loc.x;
+		int_y = (int)player_loc.x;
+		detect_input(tempa, tempw, temps, tempd, a, w, s, d);
+  change_dir(tempa, tempw, temps, tempd, a, w, s, d, int_x, int_y, Width, snake);
+		if (tempa == 2 || a == 1)
+		{
+			player.move(-speed, 0.0f);
+			player_loc.x += -speed;
+			a = 0;
+		}
+		if (tempw == 2 || w == 1)
+		{
+			player.move(0.0f, -speed);
+			//using namespace std::this_thread;
+			//using namespace std::chrono;
+			//sleep_for(milliseconds(150));
+			player_loc.y += -speed;
+			w = 0;
+		}
+		if (temps == 2 || s == 1)
+		{
+			player.move(0.0f, speed);
+			player_loc.y += speed;
+			s = 0;
+		}
+		if (tempd == 2 || d == 1)
+		{
+			player.move(speed, 0.0f);
+			player_loc.x += speed;
+			d = 0;
+		}
+		//Debugging
+		/*if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
+		{
+			sf::Vector2i mousePos = sf::Mouse::getPosition(window);
+			cout << mousePos.x;
+			cout << endl;
+			cout << mousePos.y;
+			cout << endl;
+		}*/
+		/*cout << endl;
+		cout << player_loc.x;
+		cout << endl;
+		cout << player_loc.y;
+		cout << endl;
+		cout << Apple_loc.x;
+		cout << endl;
+		cout << Apple_loc.y;
+		cout << endl;*/
+		player1_loc.x = player_loc.x - 30;
+		player1_loc.y = player_loc.y - 30;
+		player1.setOrigin(-player1_loc.x, -player1_loc.y);
+		Apple_collision_detector(score, player_loc, Apple_loc);
+		Apple.setOrigin(-Apple_loc.x, -Apple_loc.y);
+		collision = Collision_Detector(player_loc, B1_loc, B2_loc, B3_loc, B4_loc);
+		if (collision == 1)
+		{
+			window.close();
+			window.close(); window.close(); return 0;
+		}
+		else if (score == Max_score)
+		{
+			window.close();
+			return 1;
+		}
+		window.clear(sf::Color::White);
+		window.draw(back_img);
+		window.draw(frimg);
+		window.draw(border1);
+		window.draw(border2);
+		window.draw(border3);
+		window.draw(border4);
+		window.draw(player);
+		window.draw(Apple);
+		//window.draw(player1);
+		window.display();
+	}
+}
+int level5()
+{
+	sf::RectangleShape border1(sf::Vector2f(1000.0f, 25.0f));
+	sf::RectangleShape border2(sf::Vector2f(1000.0f, 25.0f));
+	sf::RectangleShape border3(sf::Vector2f(25.0f, 525.0f));
+	sf::RectangleShape border4(sf::Vector2f(25.0f, 525.0f));
+	sf::RectangleShape player(sf::Vector2f(40.0f, 40.0f));
+	sf::RectangleShape player1(sf::Vector2f(40.0f, 40.0f));
+	sf::RectangleShape Apple(sf::Vector2f(30.0f, 30.0f));
+	sf::Texture tex;
+	sf::Texture tex1;
+	sf::Texture apple;
+	sf::Texture snake;
+	sf::Sprite back_img;
+	sf::Sprite frimg;
+	sf::Vector2f B1_loc, B2_loc, B3_loc, B4_loc, player_loc, player1_loc, Apple_loc;
+	float speed = 0.5f;
+	int Max_score = 10;
+	sf::RenderWindow window(sf::VideoMode(1920, 1000), "SFML TUTORIAL", sf::Style::Close | sf::Style::Resize);
+	int a = 0, w = 0, s = 0, d = 1, tempa = 1, tempw = 1, temps = 1, tempd = 0;
+
+	int score = 0;
+	int Width = 30;
+	bool player1b = 0;
+	bool collision = 0;
+	apple.loadFromFile("apple3.png");
+	snake.loadFromFile("snake.png");
+	assert(tex.loadFromFile("back.jpg"));
+	assert(tex1.loadFromFile("backimg.png"));
+	back_img.setTexture(tex);
+	frimg.setTexture(tex1);
+	player_loc.x = 600.0f;
+	player_loc.y = 600.0f;
+	Apple_loc.x = 700.0f;
+	Apple_loc.y = 700.0f;
+	B1_loc.x = 500.0f;
+	B1_loc.y = 250.0f;
+	B2_loc.x = 525.0f;
+	B2_loc.y = 750.0f;
+	B3_loc.x = 500.0f;
+	B3_loc.y = 250.0f;
+	B4_loc.x = 1500.0f;
+	B4_loc.y = 250.0f;
+	Apple.setTexture(&apple);
+	player.setTexture(&snake);
+	player.setFillColor(sf::Color::White);
+	player1.setFillColor(sf::Color::Red);
+	Apple.setFillColor(sf::Color::White);
+	border1.setFillColor(sf::Color::Green);
+	border2.setFillColor(sf::Color::Green);
+	border3.setFillColor(sf::Color::Green);
+	border4.setFillColor(sf::Color::Green);
+	frimg.setOrigin(-525.0f, -275.0f);
+	border1.setOrigin(-B1_loc.x, -B1_loc.y);
+	border2.setOrigin(-B2_loc.x, -B2_loc.y);
+	border3.setOrigin(-B3_loc.x, -B3_loc.y);
+	border4.setOrigin(-B4_loc.x, -B4_loc.y);
+	player.setOrigin(-player_loc.x, -player_loc.y);
+	player1.setOrigin(-player_loc.x - 25, -player_loc.y - 25);
+	Apple.setOrigin(-Apple_loc.x, -Apple_loc.y);
+	while (window.isOpen())
+	{
+		sf::Event evnt;
+		while (window.pollEvent(evnt))
+		{
+			switch (evnt.type)
+			{
+			case sf::Event::Closed:
+				window.close();
+				break;
+			case sf::Event::Resized:
+				//printf("new window width : %i new window height : %i", evnt.size.width, evnt.size.height);
+				break;
+			case sf::Event::TextEntered:
+				if (evnt.text.unicode < 128)
+				{
+					//printf("%c", evnt.text.unicode);
+				}
+			}
+		}
+		int int_x, int_y;
+		int_x = (int)player_loc.x;
+		int_y = (int)player_loc.x;
+		detect_input(tempa, tempw, temps, tempd, a, w, s, d);
+		change_dir(tempa, tempw, temps, tempd, a, w, s, d, int_x, int_y, Width, snake);
+		if (tempa == 2 || a == 1)
+		{
+			player.move(-speed, 0.0f);
+			player_loc.x += -speed;
+			a = 0;
+		}
+		if (tempw == 2 || w == 1)
+		{
+			player.move(0.0f, -speed);
+			//using namespace std::this_thread;
+			//using namespace std::chrono;
+			//sleep_for(milliseconds(150));
+			player_loc.y += -speed;
+			w = 0;
+		}
+		if (temps == 2 || s == 1)
+		{
+			player.move(0.0f, speed);
+			player_loc.y += speed;
+			s = 0;
+		}
+		if (tempd == 2 || d == 1)
+		{
+			player.move(speed, 0.0f);
+			player_loc.x += speed;
+			d = 0;
+		}
+		player1_loc.x = player_loc.x - 30;
+		player1_loc.y = player_loc.y - 30;
+		player1.setOrigin(-player1_loc.x, -player1_loc.y);
+		Apple_collision_detector(score, player_loc, Apple_loc);
+		Apple.setOrigin(-Apple_loc.x, -Apple_loc.y);
+		collision = Collision_Detector(player_loc, B1_loc, B2_loc, B3_loc, B4_loc);
+		if (collision == 1)
+		{
+			window.close(); return 0;
+		}
+		else if (score == Max_score)
+		{
+			window.close(); return 1;
+		}
+		window.clear(sf::Color::White);
+		window.draw(back_img);
+		window.draw(frimg);
+		window.draw(border1);
+		window.draw(border2);
+		window.draw(border3);
+		window.draw(border4);
+		window.draw(player);
+		window.draw(Apple);
+		//window.draw(player1);
+		window.display();
+	}
+}
+int level6()
+{
+	sf::RectangleShape border1(sf::Vector2f(1000.0f, 25.0f));
+	sf::RectangleShape border2(sf::Vector2f(1000.0f, 25.0f));
+	sf::RectangleShape border3(sf::Vector2f(25.0f, 525.0f));
+	sf::RectangleShape border4(sf::Vector2f(25.0f, 525.0f));
+	sf::RectangleShape player(sf::Vector2f(40.0f, 40.0f));
+	sf::RectangleShape player1(sf::Vector2f(40.0f, 40.0f));
+	sf::RectangleShape Apple(sf::Vector2f(30.0f, 30.0f));
+	sf::Texture tex;
+	sf::Texture tex1;
+	sf::Texture apple;
+	sf::Texture snake;
+	sf::Sprite back_img;
+	sf::Sprite frimg;
+	sf::Vector2f B1_loc, B2_loc, B3_loc, B4_loc, player_loc, player1_loc, Apple_loc;
+	float speed = 0.5f;
+	int Max_score = 10;
+	sf::RenderWindow window(sf::VideoMode(1920, 1000), "SFML TUTORIAL", sf::Style::Close | sf::Style::Resize);
+	int a = 0, w = 0, s = 0, d = 1, tempa = 1, tempw = 1, temps = 1, tempd = 0;
+
+	int score = 0;
+	int Width = 30;
+	bool player1b = 0;
+	bool collision = 0;
+	apple.loadFromFile("apple3.png");
+	snake.loadFromFile("snake.png");
+	assert(tex.loadFromFile("back.jpg"));
+	assert(tex1.loadFromFile("backimg.png"));
+	back_img.setTexture(tex);
+	frimg.setTexture(tex1);
+	player_loc.x = 600.0f;
+	player_loc.y = 600.0f;
+	Apple_loc.x = 700.0f;
+	Apple_loc.y = 700.0f;
+	B1_loc.x = 500.0f;
+	B1_loc.y = 250.0f;
+	B2_loc.x = 525.0f;
+	B2_loc.y = 750.0f;
+	B3_loc.x = 500.0f;
+	B3_loc.y = 250.0f;
+	B4_loc.x = 1500.0f;
+	B4_loc.y = 250.0f;
+	Apple.setTexture(&apple);
+	player.setTexture(&snake);
+	player.setFillColor(sf::Color::White);
+	player1.setFillColor(sf::Color::Red);
+	Apple.setFillColor(sf::Color::White);
+	border1.setFillColor(sf::Color::Green);
+	border2.setFillColor(sf::Color::Green);
+	border3.setFillColor(sf::Color::Green);
+	border4.setFillColor(sf::Color::Green);
+	frimg.setOrigin(-525.0f, -275.0f);
+	border1.setOrigin(-B1_loc.x, -B1_loc.y);
+	border2.setOrigin(-B2_loc.x, -B2_loc.y);
+	border3.setOrigin(-B3_loc.x, -B3_loc.y);
+	border4.setOrigin(-B4_loc.x, -B4_loc.y);
+	player.setOrigin(-player_loc.x, -player_loc.y);
+	player1.setOrigin(-player_loc.x - 25, -player_loc.y - 25);
+	Apple.setOrigin(-Apple_loc.x, -Apple_loc.y);
+	while (window.isOpen())
+	{
+		sf::Event evnt;
+		while (window.pollEvent(evnt))
+		{
+			switch (evnt.type)
+			{
+			case sf::Event::Closed:
+				window.close();
+				break;
+			case sf::Event::Resized:
+				//printf("new window width : %i new window height : %i", evnt.size.width, evnt.size.height);
+				break;
+			case sf::Event::TextEntered:
+				if (evnt.text.unicode < 128)
+				{
+					//printf("%c", evnt.text.unicode);
+				}
+			}
+		}
+		int int_x, int_y;
+		int_x = (int)player_loc.x;
+		int_y = (int)player_loc.x;
+		detect_input(tempa, tempw, temps, tempd, a, w, s, d);
+		change_dir(tempa, tempw, temps, tempd, a, w, s, d, int_x, int_y, Width, snake);
+		if (tempa == 2 || a == 1)
+		{
+			player.move(-speed, 0.0f);
+			player_loc.x += -speed;
+			a = 0;
+		}
+		if (tempw == 2 || w == 1)
+		{
+			player.move(0.0f, -speed);
+			//using namespace std::this_thread;
+			//using namespace std::chrono;
+			//sleep_for(milliseconds(150));
+			player_loc.y += -speed;
+			w = 0;
+		}
+		if (temps == 2 || s == 1)
+		{
+			player.move(0.0f, speed);
+			player_loc.y += speed;
+			s = 0;
+		}
+		if (tempd == 2 || d == 1)
+		{
+			player.move(speed, 0.0f);
+			player_loc.x += speed;
+			d = 0;
+		}
+		player1_loc.x = player_loc.x - 30;
+		player1_loc.y = player_loc.y - 30;
+		player1.setOrigin(-player1_loc.x, -player1_loc.y);
+		Apple_collision_detector(score, player_loc, Apple_loc);
+		Apple.setOrigin(-Apple_loc.x, -Apple_loc.y);
+		collision = Collision_Detector(player_loc, B1_loc, B2_loc, B3_loc, B4_loc);
+		if (collision == 1)
+		{
+			window.close(); return 0;
+		}
+		else if (score == Max_score)
+		{
+			window.close(); return 1;
+		}
+		window.clear(sf::Color::White);
+		window.draw(back_img);
+		window.draw(frimg);
+		window.draw(border1);
+		window.draw(border2);
+		window.draw(border3);
+		window.draw(border4);
+		window.draw(player);
+		window.draw(Apple);
+		//window.draw(player1);
+		window.display();
+	}
+}
+int level7()
+{
+	sf::RectangleShape border1(sf::Vector2f(1000.0f, 25.0f));
+	sf::RectangleShape border2(sf::Vector2f(1000.0f, 25.0f));
+	sf::RectangleShape border3(sf::Vector2f(25.0f, 525.0f));
+	sf::RectangleShape border4(sf::Vector2f(25.0f, 525.0f));
+	sf::RectangleShape player(sf::Vector2f(40.0f, 40.0f));
+	sf::RectangleShape player1(sf::Vector2f(40.0f, 40.0f));
+	sf::RectangleShape Apple(sf::Vector2f(30.0f, 30.0f));
+	sf::Texture tex;
+	sf::Texture tex1;
+	sf::Texture apple;
+	sf::Texture snake;
+	sf::Sprite back_img;
+	sf::Sprite frimg;
+	sf::Vector2f B1_loc, B2_loc, B3_loc, B4_loc, player_loc, player1_loc, Apple_loc;
+	float speed = 0.5f;
+	int Max_score = 10;
+	sf::RenderWindow window(sf::VideoMode(1920, 1000), "SFML TUTORIAL", sf::Style::Close | sf::Style::Resize);
+	int a = 0, w = 0, s = 0, d = 1, tempa = 1, tempw = 1, temps = 1, tempd = 0;
+
+	int score = 0;
+	int Width = 30;
+	bool player1b = 0;
+	bool collision = 0;
+	apple.loadFromFile("apple3.png");
+	snake.loadFromFile("snake.png");
+	assert(tex.loadFromFile("back.jpg"));
+	assert(tex1.loadFromFile("backimg.png"));
+	back_img.setTexture(tex);
+	frimg.setTexture(tex1);
+	player_loc.x = 600.0f;
+	player_loc.y = 600.0f;
+	Apple_loc.x = 700.0f;
+	Apple_loc.y = 700.0f;
+	B1_loc.x = 500.0f;
+	B1_loc.y = 250.0f;
+	B2_loc.x = 525.0f;
+	B2_loc.y = 750.0f;
+	B3_loc.x = 500.0f;
+	B3_loc.y = 250.0f;
+	B4_loc.x = 1500.0f;
+	B4_loc.y = 250.0f;
+	Apple.setTexture(&apple);
+	player.setTexture(&snake);
+	player.setFillColor(sf::Color::White);
+	player1.setFillColor(sf::Color::Red);
+	Apple.setFillColor(sf::Color::White);
+	border1.setFillColor(sf::Color::Green);
+	border2.setFillColor(sf::Color::Green);
+	border3.setFillColor(sf::Color::Green);
+	border4.setFillColor(sf::Color::Green);
+	frimg.setOrigin(-525.0f, -275.0f);
+	border1.setOrigin(-B1_loc.x, -B1_loc.y);
+	border2.setOrigin(-B2_loc.x, -B2_loc.y);
+	border3.setOrigin(-B3_loc.x, -B3_loc.y);
+	border4.setOrigin(-B4_loc.x, -B4_loc.y);
+	player.setOrigin(-player_loc.x, -player_loc.y);
+	player1.setOrigin(-player_loc.x - 25, -player_loc.y - 25);
+	Apple.setOrigin(-Apple_loc.x, -Apple_loc.y);
+	while (window.isOpen())
+	{
+		sf::Event evnt;
+		while (window.pollEvent(evnt))
+		{
+			switch (evnt.type)
+			{
+			case sf::Event::Closed:
+				window.close();
+				break;
+			case sf::Event::Resized:
+				//printf("new window width : %i new window height : %i", evnt.size.width, evnt.size.height);
+				break;
+			case sf::Event::TextEntered:
+				if (evnt.text.unicode < 128)
+				{
+					//printf("%c", evnt.text.unicode);
+				}
+			}
+		}
+		int int_x, int_y;
+		int_x = (int)player_loc.x;
+		int_y = (int)player_loc.x;
+		detect_input(tempa, tempw, temps, tempd, a, w, s, d);
+  change_dir(tempa, tempw, temps, tempd, a, w, s, d, int_x, int_y, Width, snake);
+		if (tempa == 2 || a == 1)
+		{
+			player.move(-speed, 0.0f);
+			player_loc.x += -speed;
+			a = 0;
+		}
+		if (tempw == 2 || w == 1)
+		{
+			player.move(0.0f, -speed);
+			//using namespace std::this_thread;
+			//using namespace std::chrono;
+			//sleep_for(milliseconds(150));
+			player_loc.y += -speed;
+			w = 0;
+		}
+		if (temps == 2 || s == 1)
+		{
+			player.move(0.0f, speed);
+			player_loc.y += speed;
+			s = 0;
+		}
+		if (tempd == 2 || d == 1)
+		{
+			player.move(speed, 0.0f);
+			player_loc.x += speed;
+			d = 0;
+		}
+		player1_loc.x = player_loc.x - 30;
+		player1_loc.y = player_loc.y - 30;
+		player1.setOrigin(-player1_loc.x, -player1_loc.y);
+		Apple_collision_detector(score, player_loc, Apple_loc);
+		Apple.setOrigin(-Apple_loc.x, -Apple_loc.y);
+		collision = Collision_Detector(player_loc, B1_loc, B2_loc, B3_loc, B4_loc);
+		if (collision == 1)
+		{
+			window.close(); return 0;
+		}
+		else if (score == Max_score)
+		{
+			window.close(); return 1;
+		}
+		window.clear(sf::Color::White);
+		window.draw(back_img);
+		window.draw(frimg);
+		window.draw(border1);
+		window.draw(border2);
+		window.draw(border3);
+		window.draw(border4);
+		window.draw(player);
+		window.draw(Apple);
+		//window.draw(player1);
+		window.display();
+	}
+}
+int level8()
+{
+	sf::RectangleShape border1(sf::Vector2f(1000.0f, 25.0f));
+	sf::RectangleShape border2(sf::Vector2f(1000.0f, 25.0f));
+	sf::RectangleShape border3(sf::Vector2f(25.0f, 525.0f));
+	sf::RectangleShape border4(sf::Vector2f(25.0f, 525.0f));
+	sf::RectangleShape player(sf::Vector2f(40.0f, 40.0f));
+	sf::RectangleShape player1(sf::Vector2f(40.0f, 40.0f));
+	sf::RectangleShape Apple(sf::Vector2f(30.0f, 30.0f));
+	sf::Texture tex;
+	sf::Texture tex1;
+	sf::Texture apple;
+	sf::Texture snake;
+	sf::Sprite back_img;
+	sf::Sprite frimg;
+	sf::Vector2f B1_loc, B2_loc, B3_loc, B4_loc, player_loc, player1_loc, Apple_loc;
+	float speed = 0.5f;
+	int Max_score = 10;
+	sf::RenderWindow window(sf::VideoMode(1920, 1000), "SFML TUTORIAL", sf::Style::Close | sf::Style::Resize);
+	int a = 0, w = 0, s = 0, d = 1, tempa = 1, tempw = 1, temps = 1, tempd = 0;
+
+	int score = 0;
+	int Width = 30;
+	bool player1b = 0;
+	bool collision = 0;
+	apple.loadFromFile("apple3.png");
+	snake.loadFromFile("snake.png");
+	assert(tex.loadFromFile("back.jpg"));
+	assert(tex1.loadFromFile("backimg.png"));
+	back_img.setTexture(tex);
+	frimg.setTexture(tex1);
+	player_loc.x = 600.0f;
+	player_loc.y = 600.0f;
+	Apple_loc.x = 700.0f;
+	Apple_loc.y = 700.0f;
+	B1_loc.x = 500.0f;
+	B1_loc.y = 250.0f;
+	B2_loc.x = 525.0f;
+	B2_loc.y = 750.0f;
+	B3_loc.x = 500.0f;
+	B3_loc.y = 250.0f;
+	B4_loc.x = 1500.0f;
+	B4_loc.y = 250.0f;
+	Apple.setTexture(&apple);
+	player.setTexture(&snake);
+	player.setFillColor(sf::Color::White);
+	player1.setFillColor(sf::Color::Red);
+	Apple.setFillColor(sf::Color::White);
+	border1.setFillColor(sf::Color::Green);
+	border2.setFillColor(sf::Color::Green);
+	border3.setFillColor(sf::Color::Green);
+	border4.setFillColor(sf::Color::Green);
+	frimg.setOrigin(-525.0f, -275.0f);
+	border1.setOrigin(-B1_loc.x, -B1_loc.y);
+	border2.setOrigin(-B2_loc.x, -B2_loc.y);
+	border3.setOrigin(-B3_loc.x, -B3_loc.y);
+	border4.setOrigin(-B4_loc.x, -B4_loc.y);
+	player.setOrigin(-player_loc.x, -player_loc.y);
+	player1.setOrigin(-player_loc.x - 25, -player_loc.y - 25);
+	Apple.setOrigin(-Apple_loc.x, -Apple_loc.y);
+	while (window.isOpen())
+	{
+		sf::Event evnt;
+		while (window.pollEvent(evnt))
+		{
+			switch (evnt.type)
+			{
+			case sf::Event::Closed:
+				window.close();
+				break;
+			case sf::Event::Resized:
+				//printf("new window width : %i new window height : %i", evnt.size.width, evnt.size.height);
+				break;
+			case sf::Event::TextEntered:
+				if (evnt.text.unicode < 128)
+				{
+					//printf("%c", evnt.text.unicode);
+				}
+			}
+		}
+		int int_x, int_y;
+		int_x = (int)player_loc.x;
+		int_y = (int)player_loc.x;
+		detect_input(tempa, tempw, temps, tempd, a, w, s, d);
+		change_dir(tempa, tempw, temps, tempd, a, w, s, d, int_x, int_y, Width, snake);
+		if (tempa == 2 || a == 1)
+		{
+			player.move(-speed, 0.0f);
+			player_loc.x += -speed;
+			a = 0;
+		}
+		if (tempw == 2 || w == 1)
+		{
+			player.move(0.0f, -speed);
+			//using namespace std::this_thread;
+			//using namespace std::chrono;
+			//sleep_for(milliseconds(150));
+			player_loc.y += -speed;
+			w = 0;
+		}
+		if (temps == 2 || s == 1)
+		{
+			player.move(0.0f, speed);
+			player_loc.y += speed;
+			s = 0;
+		}
+		if (tempd == 2 || d == 1)
+		{
+			player.move(speed, 0.0f);
+			player_loc.x += speed;
+			d = 0;
+		}
+		player1_loc.x = player_loc.x - 30;
+		player1_loc.y = player_loc.y - 30;
+		player1.setOrigin(-player1_loc.x, -player1_loc.y);
+		Apple_collision_detector(score, player_loc, Apple_loc);
+		Apple.setOrigin(-Apple_loc.x, -Apple_loc.y);
+		collision = Collision_Detector(player_loc, B1_loc, B2_loc, B3_loc, B4_loc);
+		if (collision == 1)
+		{
+			window.close(); return 0;
+		}
+		else if (score == Max_score)
+		{
+			window.close(); return 1;
+		}
+		window.clear(sf::Color::White);
+		window.draw(back_img);
+		window.draw(frimg);
+		window.draw(border1);
+		window.draw(border2);
+		window.draw(border3);
+		window.draw(border4);
+		window.draw(player);
+		window.draw(Apple);
+		//window.draw(player1);
+		window.display();
+	}
+}
+int level9()
+{
+	sf::RectangleShape border1(sf::Vector2f(1000.0f, 25.0f));
+	sf::RectangleShape border2(sf::Vector2f(1000.0f, 25.0f));
+	sf::RectangleShape border3(sf::Vector2f(25.0f, 525.0f));
+	sf::RectangleShape border4(sf::Vector2f(25.0f, 525.0f));
+	sf::RectangleShape player(sf::Vector2f(40.0f, 40.0f));
+	sf::RectangleShape player1(sf::Vector2f(40.0f, 40.0f));
+	sf::RectangleShape Apple(sf::Vector2f(30.0f, 30.0f));
+	sf::Texture tex;
+	sf::Texture tex1;
+	sf::Texture apple;
+	sf::Texture snake;
+	sf::Sprite back_img;
+	sf::Sprite frimg;
+	sf::Vector2f B1_loc, B2_loc, B3_loc, B4_loc, player_loc, player1_loc, Apple_loc;
+	float speed = 0.5f;
+	int Max_score = 10;
+	sf::RenderWindow window(sf::VideoMode(1920, 1000), "SFML TUTORIAL", sf::Style::Close | sf::Style::Resize);
+	int a = 0, w = 0, s = 0, d = 1, tempa = 1, tempw = 1, temps = 1, tempd = 0;
+	int score = 0;
+	int Width = 30;
+	bool player1b = 0;
+	bool collision = 0;
+	apple.loadFromFile("apple3.png");
+	snake.loadFromFile("snake.png");
+	assert(tex.loadFromFile("back.jpg"));
+	assert(tex1.loadFromFile("backimg.png"));
+	back_img.setTexture(tex);
+	frimg.setTexture(tex1);
+	player_loc.x = 600.0f;
+	player_loc.y = 600.0f;
+	Apple_loc.x = 700.0f;
+	Apple_loc.y = 700.0f;
+	B1_loc.x = 500.0f;
+	B1_loc.y = 250.0f;
+	B2_loc.x = 525.0f;
+	B2_loc.y = 750.0f;
+	B3_loc.x = 500.0f;
+	B3_loc.y = 250.0f;
+	B4_loc.x = 1500.0f;
+	B4_loc.y = 250.0f;
+	Apple.setTexture(&apple);
+	player.setTexture(&snake);
+	player.setFillColor(sf::Color::White);
+	player1.setFillColor(sf::Color::Red);
+	Apple.setFillColor(sf::Color::White);
+	border1.setFillColor(sf::Color::Green);
+	border2.setFillColor(sf::Color::Green);
+	border3.setFillColor(sf::Color::Green);
+	border4.setFillColor(sf::Color::Green);
+	frimg.setOrigin(-525.0f, -275.0f);
+	border1.setOrigin(-B1_loc.x, -B1_loc.y);
+	border2.setOrigin(-B2_loc.x, -B2_loc.y);
+	border3.setOrigin(-B3_loc.x, -B3_loc.y);
+	border4.setOrigin(-B4_loc.x, -B4_loc.y);
+	player.setOrigin(-player_loc.x, -player_loc.y);
+	player1.setOrigin(-player_loc.x - 25, -player_loc.y - 25);
+	Apple.setOrigin(-Apple_loc.x, -Apple_loc.y);
+	while (window.isOpen())
+	{
+		sf::Event evnt;
+		while (window.pollEvent(evnt))
+		{
+			switch (evnt.type)
+			{
+			case sf::Event::Closed:
+				window.close();
+				break;
+			case sf::Event::Resized:
+				//printf("new window width : %i new window height : %i", evnt.size.width, evnt.size.height);
+				break;
+			case sf::Event::TextEntered:
+				if (evnt.text.unicode < 128)
+				{
+					//printf("%c", evnt.text.unicode);
+				}
+			}
+		}
+		int int_x, int_y;
+		int_x = (int)player_loc.x;
+		int_y = (int)player_loc.x;
+		detect_input(tempa, tempw, temps, tempd, a, w, s, d);
+		change_dir(tempa, tempw, temps, tempd, a, w, s, d, int_x, int_y, Width, snake);
+		if (tempa == 2 || a == 1)
+		{
+			player.move(-speed, 0.0f);
+			player_loc.x += -speed;
+			a = 0;
+		}
+		if (tempw == 2 || w == 1)
+		{
+			player.move(0.0f, -speed);
+			//using namespace std::this_thread;
+			//using namespace std::chrono;
+			//sleep_for(milliseconds(150));
+			player_loc.y += -speed;
+			w = 0;
+		}
+		if (temps == 2 || s == 1)
+		{
+			player.move(0.0f, speed);
+			player_loc.y += speed;
+			s = 0;
+		}
+		if (tempd == 2 || d == 1)
+		{
+			player.move(speed, 0.0f);
+			player_loc.x += speed;
+			d = 0;
+		}
+		player1_loc.x = player_loc.x - 30;
+		player1_loc.y = player_loc.y - 30;
+		player1.setOrigin(-player1_loc.x, -player1_loc.y);
+		Apple_collision_detector(score, player_loc, Apple_loc);
+		Apple.setOrigin(-Apple_loc.x, -Apple_loc.y);
+		collision = Collision_Detector(player_loc, B1_loc, B2_loc, B3_loc, B4_loc);
+		if (collision == 1)
+		{
+			window.close(); return 0;
+		}
+		else if (score == Max_score)
+		{
+			window.close();
+			return 1;
+		}
+		window.clear(sf::Color::White);
+		window.draw(back_img);
+		window.draw(frimg);
+		window.draw(border1);
+		window.draw(border2);
+		window.draw(border3);
+		window.draw(border4);
+		window.draw(player);
+		window.draw(Apple);
+		//window.draw(player1);
+		window.display();
+	}
+}
+int level10()
+{
+	sf::RectangleShape border1(sf::Vector2f(1000.0f, 25.0f));
+	sf::RectangleShape border2(sf::Vector2f(1000.0f, 25.0f));
+	sf::RectangleShape border3(sf::Vector2f(25.0f, 525.0f));
+	sf::RectangleShape border4(sf::Vector2f(25.0f, 525.0f));
+	sf::RectangleShape player(sf::Vector2f(40.0f, 40.0f));
+	sf::RectangleShape player1(sf::Vector2f(40.0f, 40.0f));
+	sf::RectangleShape Apple(sf::Vector2f(30.0f, 30.0f));
+	sf::Texture tex;
+	sf::Texture tex1;
+	sf::Texture apple;
+	sf::Texture snake;
+	sf::Sprite back_img;
+	sf::Sprite frimg;
+	sf::Vector2f B1_loc, B2_loc, B3_loc, B4_loc, player_loc, player1_loc, Apple_loc;
+	float speed = 0.5f;
+	int Max_score = 10;
+	sf::RenderWindow window(sf::VideoMode(1920, 1000), "SFML TUTORIAL", sf::Style::Close | sf::Style::Resize);
+	int a = 0, w = 0, s = 0, d = 1, tempa = 1, tempw = 1, temps = 1, tempd = 0;
+
+	int score = 0;
+	int Width = 30;
+	bool player1b = 0;
+	bool collision = 0;
+	apple.loadFromFile("apple3.png");
+	snake.loadFromFile("snake.png");
+	assert(tex.loadFromFile("back.jpg"));
+	assert(tex1.loadFromFile("backimg.png"));
+	back_img.setTexture(tex);
+	frimg.setTexture(tex1);
+	player_loc.x = 600.0f;
+	player_loc.y = 600.0f;
+	Apple_loc.x = 700.0f;
+	Apple_loc.y = 700.0f;
+	B1_loc.x = 500.0f;
+	B1_loc.y = 250.0f;
+	B2_loc.x = 525.0f;
+	B2_loc.y = 750.0f;
+	B3_loc.x = 500.0f;
+	B3_loc.y = 250.0f;
+	B4_loc.x = 1500.0f;
+	B4_loc.y = 250.0f;
+	Apple.setTexture(&apple);
+	player.setTexture(&snake);
+	player.setFillColor(sf::Color::White);
+	player1.setFillColor(sf::Color::Red);
+	Apple.setFillColor(sf::Color::White);
+	border1.setFillColor(sf::Color::Green);
+	border2.setFillColor(sf::Color::Green);
+	border3.setFillColor(sf::Color::Green);
+	border4.setFillColor(sf::Color::Green);
+	frimg.setOrigin(-525.0f, -275.0f);
+	border1.setOrigin(-B1_loc.x, -B1_loc.y);
+	border2.setOrigin(-B2_loc.x, -B2_loc.y);
+	border3.setOrigin(-B3_loc.x, -B3_loc.y);
+	border4.setOrigin(-B4_loc.x, -B4_loc.y);
+	player.setOrigin(-player_loc.x, -player_loc.y);
+	player1.setOrigin(-player_loc.x - 25, -player_loc.y - 25);
+	Apple.setOrigin(-Apple_loc.x, -Apple_loc.y);
+	while (window.isOpen())
+	{
+		sf::Event evnt;
+		while (window.pollEvent(evnt))
+		{
+			switch (evnt.type)
+			{
+			case sf::Event::Closed:
+				window.close();
+				break;
+			case sf::Event::Resized:
+				//printf("new window width : %i new window height : %i", evnt.size.width, evnt.size.height);
+				break;
+			case sf::Event::TextEntered:
+				if (evnt.text.unicode < 128)
+				{
+					//printf("%c", evnt.text.unicode);
+				}
+			}
+		}
+		int int_x, int_y;
+		int_x = (int)player_loc.x;
+		int_y = (int)player_loc.x;
+		detect_input(tempa, tempw, temps, tempd, a, w, s, d);
+		change_dir(tempa, tempw, temps, tempd, a, w, s, d, int_x, int_y, Width, snake);
+		if (tempa == 2 || a == 1)
+		{
+			player.move(-speed, 0.0f);
+			player_loc.x += -speed;
+			a = 0;
+		}
+		if (tempw == 2 || w == 1)
+		{
+			player.move(0.0f, -speed);
+			//using namespace std::this_thread;
+			//using namespace std::chrono;
+			//sleep_for(milliseconds(150));
+			player_loc.y += -speed;
+			w = 0;
+		}
+		if (temps == 2 || s == 1)
+		{
+			player.move(0.0f, speed);
+			player_loc.y += speed;
+			s = 0;
+		}
+		if (tempd == 2 || d == 1)
+		{
+			player.move(speed, 0.0f);
+			player_loc.x += speed;
+			d = 0;
+		}
+		player1_loc.x = player_loc.x - 30;
+		player1_loc.y = player_loc.y - 30;
+		player1.setOrigin(-player1_loc.x, -player1_loc.y);
+		Apple_collision_detector(score, player_loc, Apple_loc);
+		Apple.setOrigin(-Apple_loc.x, -Apple_loc.y);
+		collision = Collision_Detector(player_loc, B1_loc, B2_loc, B3_loc, B4_loc);
+		if (collision == 1)
+		{
+			window.close(); return 0;
+		}
+		else if (score == Max_score)
+		{
+			window.close(); return 1;
+		}
+		window.clear(sf::Color::White);
+		window.draw(back_img);
+		window.draw(frimg);
+		window.draw(border1);
+		window.draw(border2);
+		window.draw(border3);
+		window.draw(border4);
+		window.draw(player);
+		window.draw(Apple);
+		//window.draw(player1);
+		window.display();
+	}
+}
+string player_data_input()
+{
+	string pname;
+	ofstream plout("store_info1.dat", ios::binary | ios::app);
+	ifstream plin("store_info1.dat", ios::binary);
+	bool var = 0;
+	cout << "Enter name of the player-\n";
+	cin >> pname;
+	for (int i = 0; i < 15; i++)
+	{
+		plin.read((char*)& player_info, sizeof(player_info));
+		if (pname == player_info.name)
+		{
+			cout << "player exists";
+			return pname;
+			var = 1;
+		}
+	}
+	if (var == 0)
+	{
+		player_info.name = pname;
+		plout.write((char*)&player_info, sizeof(player_info));
+		cout << "\nName saved ";
+		return pname;
+	}
+	else return NULL;
+	plin.close();
+	plout.close();
+}
+int play_game(string player_name)
+{
+	int cur_level;
+	players playing;
+	fstream plin;
+	bool var = 0;
+	plin.open("store_info1.dat", ios::binary | ios::in);
+	for (; var == 0;)
+	{
+		plin.read((char*)& playing, sizeof(playing));
+		if (player_name == playing.name)
+		{
+			var = 1;
+		}
+	}
+	bool result = 1;
+	do
+	{
+		cur_level = playing.level;
+		if (cur_level == 1)
+		{
+			result = level1();
+			if (result == 1)
+				cout << "you won the first level";
+			else
+				cout << "sorry you lost bro/sis";
+		}
+		else if (cur_level == 2)
+		{
+			result = level2();
+			if (result == 1)
+				cout << "you won the Second level";
+			else
+				cout << "sorry you lost bro/sis";
+		}
+		else if (cur_level == 3)
+		{
+			result = level3();
+			if (result == 1)
+				cout << "you won the Third level";
+			else
+				cout << "sorry you lost bro/sis";
+		}
+		else if (cur_level == 4)
+		{
+			result = level4();
+			if (result == 1)
+			{
+				cout << "you won the Fourth level";
+			}
+			else
+				cout << "sorry you lost bro/sis";
+		}
+		else if (cur_level == 5)
+		{
+			result = level5();
+			if (result == 1)
+				cout << "you won the Fifth level";
+			else
+				cout << "sorry you lost bro/sis";
+		}
+		else if (cur_level == 6)
+		{
+			result = level6();
+			if (result == 1)
+				cout << "you won the Sixth level";
+			else
+				cout << "sorry you lost bro/sis";
+		}
+		else if (cur_level == 7)
+		{
+			result = level7();
+			if (result == 1)
+				cout << "you won the Seventh level";
+			else
+				cout << "sorry you lost bro/sis";
+		}
+		else if (cur_level == 8)
+		{
+			result = level8();
+			if (result == 1)
+				cout << "you won the Eighth level";
+			else
+				cout << "sorry you lost bro/sis";
+		}
+		else if (cur_level == 9)
+		{
+			result = level9();
+			if (result == 1)
+				cout << "you won the Ninth level";
+			else
+				cout << "sorry you lost bro/sis";
+		}
+		else if (cur_level == 10)
+		{
+			result = level10();
+			if (result == 1)
+				cout << "you won the Last level";
+			else
+				cout << "sorry you lost bro/sis";
+		}
+		if (result == 1)
+		{
+			playing.level++;
+			int temp;
+			temp = sizeof(playing);
+			plin.seekp(-1 * temp, ios::cur);
+			plin.write((char*)& playing, sizeof(playing));
+		}
+	} while (result == 1 && cur_level<=10);
+	if (result == 0)
+	{
+		cout << "you lost";
+		return 0;
+	}
+	else return 1;
+	plin.close();
+}
+void settings()
+{
+	cout << "settings";
+}
+void scoreboard()
+{
+	cout << "scoreboard";
+}
+void menu()
+{
+	int  ch;
+	string name;
+	cout << "\t\t\t\t***************\n";
+	cout << "\t\t\t\tSNAKE XENSIA\n";
+	cout << "\t\t\t\t****************\n\n";
+	cout << "\t\t\t\tPLAY GAME(1)\n";
+	cout << "\t\t\t\tSETTINGS(2)\n";
+	cout << "\t\t\t\tSCORE BOARD(3)\n";
+	cout << "\t\t\t\tQUIT(4)\n";
+	cin >> ch;
+	int win;
+	switch (ch)
+	{
+	case 1: name = player_data_input();
+			win = play_game(name);
+			break;
+	case 2: settings();
+			break;
+	case 3: scoreboard();
+			break;
+	case 4: exit(0);
+		break;
+	default: cout << "Such option does not exit";
+	}
+
+}
+sf::RectangleShape Apple(sf::Vector2f(30.0f, 30.0f));
+sf::Texture apple;
+sf::Texture snake;
+sf::Texture Rbody;
+struct snake {
+	int x;
+	int y;
+}S;
+struct body {
+	int x;
+	int y;
+}B[500];
+struct food {
+	int x;
+	int y;
+}f[500];
+int num = 1;
+int dir=4;
+void mover(int dir)
+{
+	if (dir == 0)
+	{
+		snake.loadFromFile("snakeL.png");
+		Rbody.loadFromFile("RbodyL.png");
+		S.x -= 1;
+	}
+	if (dir == 1)
+	{
+		snake.loadFromFile("snakeU.png");
+		Rbody.loadFromFile("RbodyU.png");
+		S.y -= 1;
+	}
+	if (dir == 2)
+	{
+		snake.loadFromFile("snake.png");
+		Rbody.loadFromFile("Rbody.png");
+		S.x += 1;
+	}
+	if (dir == 3)
+	{
+		snake.loadFromFile("snakeD.png");
+		Rbody.loadFromFile("RbodyD.png");
+		S.y += 1;
+	}
+
+}
+int I = 1;
+int game()
+{
+	float originx = 125;
+	float originy = 140;
+	sf::Font font;
+	font.loadFromFile("CloisterBlack.ttf");
+	sf::Text text;
+	text.setFont(font);
+	text.setString("SNAKE XENSIA");
+	text.setCharacterSize(100);
+	text.setFillColor(sf::Color::Black);
+	text.setStyle(sf::Text::Style::Bold);
+	text.setOrigin(-550, 0);
+	apple.loadFromFile("apple3.png");
+	sf::RectangleShape border1(sf::Vector2f(1060.0f, 15.0f));
+	sf::RectangleShape border2(sf::Vector2f(1075.0f, 15.0f));
+	sf::RectangleShape border3(sf::Vector2f(15.0f, 720.0f));
+	sf::RectangleShape border4(sf::Vector2f(15.0f, 720.0f));
+	sf::RectangleShape player(sf::Vector2f(30.0f, 30.0f));
+	sf::RectangleShape Body(sf::Vector2f(30.0f, 30.0f));
+	snake.loadFromFile("snake.png");
+	Rbody.loadFromFile("snake.png");
+	Apple.setTexture(&apple);
+	player.setTexture(&snake);
+	Body.setTexture(&Rbody);
+	sf::Texture tex;
+	sf::Texture tex1;
+	sf::Sprite back_img;
+	sf::Sprite frimg;
+	sf::Vector2f B1_loc, B2_loc, B3_loc, B4_loc, player_loc, player1_loc, Apple_loc;
+	B1_loc.x = 125.0f;
+	B1_loc.y = 140.0f;
+	B2_loc.x = 125.0f;
+	B2_loc.y = 860.0f;
+	B3_loc.x = 125.0f;
+	B3_loc.y = 140.0f;
+	B4_loc.x = 1185.0f;
+	B4_loc.y = 140.0f;
+	float speed = 0.5f;
+	int sizex = 30;
+	int sizey = 30;
+	int Max_score = 10;
+	bool a = 1, w = 1, s = 1, d = 1;
+	sf::RenderWindow window(sf::VideoMode(1920, 1000), "SFML TUTORIAL", sf::Style::Close | sf::Style::Resize);
+	assert(tex.loadFromFile("back.jpg"));
+	assert(tex1.loadFromFile("frimg.png"));
+	back_img.setTexture(tex);
+	frimg.setTexture(tex1);
+	player.setFillColor(sf::Color::White);
+	Body.setFillColor(sf::Color::White);
+	Apple.setFillColor(sf::Color::White);
+	border1.setFillColor(sf::Color::Green);
+	border2.setFillColor(sf::Color::Green);
+	border3.setFillColor(sf::Color::Green);
+	border4.setFillColor(sf::Color::Green);
+	frimg.setOrigin(-originx, -originy);
+	border1.setOrigin(-B1_loc.x, -B1_loc.y);
+	border2.setOrigin(-B2_loc.x, -B2_loc.y);
+	border3.setOrigin(-B3_loc.x, -B3_loc.y);
+	border4.setOrigin(-B4_loc.x, -B4_loc.y);
+	player.setOrigin(-player_loc.x, -player_loc.y);
+	Apple.setOrigin(-Apple_loc.x, -Apple_loc.y);
+	sf::Clock clock;
+	sf::Time T1, T2;
+	sf::Time delay = sf::milliseconds(50);
+	S.x = 20;
+	S.y = 20;
+	while (window.isOpen())
+	{
+		//clock.restart();
+		T1 = clock.getElapsedTime();
+		if (T1.asMilliseconds() < delay.asMilliseconds())
+		{
+			continue;
+		}
+		else clock.restart();
+		sf::Event evnt;
+		while (window.pollEvent(evnt))
+		{
+			switch (evnt.type)
+			{
+			case sf::Event::Closed:
+				window.close();
+				break;
+			case sf::Event::Resized:
+				//printf("new window width : %i new window height : %i", evnt.size.width, evnt.size.height);
+				break;
+			case sf::Event::TextEntered:
+				if (evnt.text.unicode < 128)
+				{
+					//printf("%c", evnt.text.unicode);
+				}
+			}
+		}
+		if (S.x == X && S.y == Y)
+		{	
+			srand(time(0));
+			cout << "collision detected";
+			X = (rand() % 38)+4;
+			Y = (rand() % 18)+4;
+			Apple.setPosition(X, Y);
+			num++;
+		}
+
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::A) && a == 1 && d == 1)
+		{
+			dir = 0;
+			a = 0;
+			w = 1;
+			s = 1;
+			d = 1;
+		}
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::W) && w == 1 && s == 1)
+		{
+			dir = 1;
+			a = 1;
+			w = 0;
+			s = 1;
+			d = 1;
+		}
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::S) && s == 1 && w == 1)
+		{
+			dir = 3;
+			a = 1;
+			w = 1;
+			s = 0;
+			d = 1;
+		}
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::D) && d == 1 && a == 1)
+		{
+			dir = 2;
+			a = 1 ;
+			w = 1;
+			s = 1;
+			d = 0;
+		}
+		for (int i = num; i > 0; i--)
+		{
+			if (i > 1)
+			{
+				B[i].x = B[i - 1].x;
+				B[i].y = B[i - 1].y;
+			}
+			else
+			{
+				B[1].y = S.y;
+				B[1].x = S.x;
+			}
+		}
+		mover(dir);
+		if (num > 3)
+		{
+			for (int i = 4; i < num; i++)
+			{
+				if (S.x == B[i].x && S.y == B[i].y)
+				{
+					cout << "collided bro";
+					window.close();
+					return 0;
+				}
+			}
+		}
+		if (I == 1)
+		{
+			player.setPosition(500, 500);
+			I++;
+		}
+		player_loc = player.getPosition();
+		if (player_loc.x <= 130)
+		{
+			cout << "collision with b1";
+			window.close();
+			return 0;
+		}
+		if (player_loc.x >= 1150)
+		{
+			cout << "collision with b2";
+			window.close();
+			return 0;
+		}
+		if (player_loc.y <= 150)
+		{
+			cout << "collision with b3";
+			window.close();
+			return 0;
+		}
+		if (player_loc.y >= 840)
+		{
+			cout << "collision with b4";
+			window.close();
+			return 0;
+		}
+		Apple.setPosition(X*sizex, Y*sizey);
+		window.clear(sf::Color::White);
+		window.draw(back_img);
+		window.draw(frimg);
+		window.draw(border1);
+		window.draw(border2);
+		window.draw(border3);
+		window.draw(border4);
+		player.setPosition(sizex*S.x, sizey*S.y);
+		window.draw(player);
+		for (int i = 1; i < num; i++)
+		{
+			Body.setPosition(sizex*B[i].x, sizey*B[i].y);
+			window.draw(Body);
+		}
+		window.draw(Apple);
+		window.draw(text);
+		window.display();
+	}
+}
+int main()
+{
+	//menu();
+	game();
+	_getch();
+	return 0;
+}

@@ -1,0 +1,455 @@
+#include "Header.h"
+#include <cassert>
+#include"header.h"
+struct players
+{
+	string name;
+	int level = 1;
+	string password;
+}player_info;
+
+sf::RectangleShape border1(sf::Vector2f(1000.0f, 25.0f));
+sf::RectangleShape border2(sf::Vector2f(1000.0f, 25.0f));
+sf::RectangleShape border3(sf::Vector2f(25.0f, 525.0f));
+sf::RectangleShape border4(sf::Vector2f(25.0f, 525.0f));
+sf::RectangleShape player(sf::Vector2f(40.0f, 40.0f));
+sf::RectangleShape player1(sf::Vector2f(40.0f, 40.0f));
+sf::RectangleShape Apple(sf::Vector2f(30.0f, 30.0f));
+sf::Texture tex;
+sf::Texture tex1;
+sf::Texture apple;
+sf::Texture snake;
+sf::Sprite back_img;
+sf::Sprite frimg;
+sf::Vector2f B1_loc, B2_loc, B3_loc, B4_loc, player_loc, player1_loc, Apple_loc;
+
+void Assign_random(sf::Vector2f &Loc)
+{
+	//value must be from 525 to 1460
+	//value must be from 275 to 7Width
+	srand(time(0));
+	Loc.x = (rand() % 935) + 525;
+	Loc.y = (rand() % 425) + 275;
+}
+void detect_input(int  &tempa, int &tempw, int &temps, int &tempd, int &a, int &w, int &s, int &d)
+{
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::A) && tempa == 1 )
+	{
+		a = 1;
+		tempa = 0;
+	}
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::W) && tempw == 1)
+	{
+		w = 1;
+		tempw = 0;
+		
+	}
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::S) && temps == 1 )
+	{
+		s = 1;
+		
+		temps = 0;
+	}
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::D) && tempd == 1)
+	{
+			
+		d = 1;
+		
+		tempd = 0 ;
+	}
+
+}
+void change_dir(int  &tempa, int &tempw, int &temps, int &tempd, int &a, int &w, int &s, int &d, int int_x, int int_y, int Width)
+{
+	if (tempa == 0 && int_y % Width == 0)
+	{
+		snake.loadFromFile("snakeL.png");
+		w = 0;
+		a = 0;
+		s = 0;
+		d = 0;
+		tempa = 2;
+		tempw = 1;
+		temps = 1;
+		tempd = 1;
+	}
+	if (tempw == 0 && int_x % Width == 0)
+	{
+		snake.loadFromFile("snakeU.png");
+		s = 0;
+		d = 0;
+		a = 0;
+		tempw = 2;
+		tempa = 1;
+		temps = 1;
+		tempd = 1;
+	}
+	if (temps == 0 && int_x % Width == 0)
+	{
+		snake.loadFromFile("snakeD.png");
+		a = 0;
+		w = 0;
+		d = 0;
+		tempa = 1;
+		tempw = 1;
+		tempd = 1;
+		temps = 2;
+	}
+	if (tempd==0 && int_y % Width == 0)
+	{
+		snake.loadFromFile("snake.png");
+		a = 0;
+		w = 0;
+		s = 0;
+		tempa = 1;
+		tempw = 1;
+		temps = 1;
+		tempd = 2;
+	}
+}
+void Apple_collision_detector(int  &tempa, int &tempw, int &temps, int &tempd, int &a, int &w, int &s, int &d, int &score)
+{
+	if (player_loc.x <= Apple_loc.x + 40 && (player_loc.x + 40) >= Apple_loc.x)
+	{
+		if (player_loc.y <= Apple_loc.y + 40 && (player_loc.y + 40) >= Apple_loc.y)
+		{
+			//cout << "collision occured";
+			Assign_random(Apple_loc);
+			Apple.setOrigin(-Apple_loc.x, -Apple_loc.y);
+			score++;
+			//player1b = 1;
+		}
+	}
+}
+bool Collision_Detector(int  &tempa, int &tempw, int &temps, int &tempd, int &a, int &w, int &s, int &d)
+{
+	if (player_loc.x <= (B3_loc.x+25))
+	{
+		return 1;
+		//cout << "collision Detected";
+	}
+	else if ((player_loc.x+40) >= B4_loc.x)
+	{
+		return 1;
+		//cout << "collision Detected";
+	}
+	else if ((player_loc.y) <= (B1_loc.y+25))
+	{
+		return 1;
+		//cout << "collision Detected";
+	}
+	else if ((player_loc.y + 40) >= (B2_loc.y))
+	{
+		return 1;
+		//cout << "collision Detected";
+	}
+	else return 0;
+}
+int level( float speed, int Max_score)
+{
+	sf::RenderWindow window(sf::VideoMode(1920, 1000), "SFML TUTORIAL", sf::Style::Close | sf::Style::Resize);
+	int a = 0, w = 0, s = 0, d = 1, tempa = 1, tempw = 1, temps = 1, tempd = 0, moda=0, modw=0, mods=0, modd=1;
+
+	int score = 0;
+	int Width = 30;
+	bool player1b = 0;
+	bool collision = 0;
+	apple.loadFromFile("apple3.png");
+	snake.loadFromFile("snake.png");
+	assert(tex.loadFromFile("back.jpg"));
+	assert(tex1.loadFromFile("backimg.png"));
+	back_img.setTexture(tex);
+	frimg.setTexture(tex1);
+	player_loc.x = 600.0f;
+	player_loc.y = 600.0f;
+	Apple_loc.x = 700.0f;
+	Apple_loc.y = 700.0f;
+	B1_loc.x = 500.0f;
+	B1_loc.y = 250.0f;
+	B2_loc.x = 525.0f;
+	B2_loc.y = 750.0f;
+	B3_loc.x = 500.0f;
+	B3_loc.y = 250.0f;
+	B4_loc.x = 1500.0f;
+	B4_loc.y = 250.0f;
+	Apple.setTexture(&apple);
+	player.setTexture(&snake);
+	player.setFillColor(sf::Color::White);
+	player1.setFillColor(sf::Color::Red);
+	Apple.setFillColor(sf::Color::White);
+	border1.setFillColor(sf::Color::Green);
+	border2.setFillColor(sf::Color::Green);
+	border3.setFillColor(sf::Color::Green);
+	border4.setFillColor(sf::Color::Green);
+	frimg.setOrigin(-525.0f, -275.0f);
+	border1.setOrigin(-B1_loc.x, -B1_loc.y);
+	border2.setOrigin(-B2_loc.x, -B2_loc.y);
+	border3.setOrigin(-B3_loc.x, -B3_loc.y);
+	border4.setOrigin(-B4_loc.x, -B4_loc.y);
+	player.setOrigin(-player_loc.x, -player_loc.y);
+	player1.setOrigin(-player_loc.x-25, -player_loc.y-25);
+	Apple.setOrigin(-Apple_loc.x, -Apple_loc.y);
+	while (window.isOpen())
+	{
+		sf::Event evnt;
+		while (window.pollEvent(evnt))
+		{
+			switch (evnt.type)
+			{
+			case sf::Event::Closed:
+				window.close();
+				break;
+			case sf::Event::Resized:
+				//printf("new window width : %i new window height : %i", evnt.size.width, evnt.size.height);
+				break;
+			case sf::Event::TextEntered:
+				if (evnt.text.unicode < 128)
+				{
+					//printf("%c", evnt.text.unicode);
+				}
+			}
+		}
+		int int_x, int_y;
+		int_x=(int)player_loc.x;
+		int_y=(int)player_loc.x;
+		detect_input(tempa, tempw, temps, tempd, a, w, s, d);
+		change_dir(tempa, tempw, temps, tempd, a, w, s, d, int_x, int_y, Width);
+		if (tempa == 2 || a == 1)
+		{
+			player.move(-speed, 0.0f);
+			player_loc.x += -speed;
+			a = 0;
+		}
+		if (tempw == 2 || w == 1)
+		{
+			player.move(0.0f, -speed);
+			//using namespace std::this_thread;
+			//using namespace std::chrono;
+			//sleep_for(milliseconds(150));
+			player_loc.y += -speed;
+			w = 0;
+		}
+		if (temps == 2 || s == 1)
+		{
+			player.move(0.0f, speed);
+			player_loc.y += speed;
+			s = 0;
+		}
+		if (tempd == 2 || d == 1)
+		{
+			player.move(speed, 0.0f);
+			player_loc.x += speed;
+			d = 0;
+		}
+		//Debugging
+		/*if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
+		{
+			sf::Vector2i mousePos = sf::Mouse::getPosition(window);
+			cout << mousePos.x;
+			cout << endl;
+			cout << mousePos.y;
+			cout << endl;
+		}*/
+		/*cout << endl;
+		cout << player_loc.x;
+		cout << endl;
+		cout << player_loc.y;
+		cout << endl;
+		cout << Apple_loc.x;
+		cout << endl;
+		cout << Apple_loc.y;
+		cout << endl;*/
+		player1_loc.x = player_loc.x - 30;
+		player1_loc.y = player_loc.y - 30;
+		player1.setOrigin(-player1_loc.x,- player1_loc.y);
+		Apple_collision_detector(tempa, tempw, temps, tempd, a, w, s, d, score);
+		collision = Collision_Detector(tempa, tempw, temps, tempd, a, w, s, d);
+		if (collision == 1)
+		{
+			return 0;
+		}
+		else if (score == Max_score)
+		{
+			return 1;
+		}
+		window.clear(sf::Color::White);
+		window.draw(back_img);
+		window.draw(frimg);
+		window.draw(border1);
+		window.draw(border2);
+		window.draw(border3);
+		window.draw(border4);
+		window.draw(player);
+		window.draw(Apple);
+		//window.draw(player1);
+		window.display();
+	}
+}
+string player_data_input()
+{
+	string pname;
+	ofstream plout("store_info1.dat", ios::binary | ios::app);
+	ifstream plin("store_info1.dat", ios::binary);
+	bool var = 0;
+	cout << "Enter name of the player-\n";
+	cin >> pname;
+	for (int i = 0; i < 15; i++)
+	{
+		plin.read((char*)& player_info, sizeof(player_info));
+		if (pname == player_info.name)
+		{
+			cout << "player exists";
+			return pname;
+			var = 1;
+		}
+	}
+	if (var == 0)
+	{
+		player_info.name = pname;
+		plout.write((char*)&player_info, sizeof(player_info));
+		cout << "\nName saved ";
+		return pname;
+	}
+	plin.close();
+}
+void play_game(string player_name)
+{
+	int cur_level;
+	players playing;
+	fstream plin;
+	bool var = 0;
+	plin.open("store_info1.dat", ios::binary | ios::in);
+
+	for (; var == 0;)
+	{
+		plin.read((char*)& playing, sizeof(playing));
+		if (player_name == playing.name)
+		{
+			var = 1;
+		}
+	}
+	bool result = 1;
+	do
+	{
+		cur_level = playing.level;
+		switch (cur_level)
+		{
+		case 1:
+			result = level(0.5f, 10);
+			if (result == 1)
+				cout << "you won the first level";
+			else
+				cout << "sorry you lost bro/sis";
+			break;
+		case 2:
+			result = level(0.6f, 12);
+			if (result == 1)
+				cout << "you won the first level";
+			else
+				cout << "sorry you lost bro/sis";
+			break;
+		case 3:
+			result = level(0.7f, 14);
+			if (result == 1)
+				cout << "you won the first level";
+			else
+				cout << "sorry you lost bro/sis";
+			break;
+		case 4: 
+			result = level(0.8f, 15);
+			if (result == 1)
+				cout << "you won the first level";
+			else
+				cout << "sorry you lost bro/sis";
+			break;
+		case 5:
+			result = level(0.9f, 16);
+			if (result == 1)
+				cout << "you won the first level";
+			else
+				cout << "sorry you lost bro/sis";
+			break;
+		case 6:
+			result = level(1.0f, 18);
+			if (result == 1)
+				cout << "you won the first level";
+			else
+				cout << "sorry you lost bro/sis";
+			break;
+		case 7:
+			result = level(1.1f, 20);
+			if (result == 1)
+				cout << "you won the first level";
+			else
+				cout << "sorry you lost bro/sis";
+			break;
+		case 8:
+			result = level(1.5f, 22);
+			if (result == 1)
+				cout << "you won the first level";
+			else
+				cout << "sorry you lost bro/sis";
+			break;
+		case 9:
+			result = level(2.0f, 24);
+			if (result == 1)
+				cout << "you won the first level";
+			else
+				cout << "sorry you lost bro/sis";
+			break;
+		case 10:
+			result = level(0.25f, 25);
+			if (result == 1)
+				cout << "you won the first level";
+			else
+				cout << "sorry you lost bro/sis";
+			break;
+		default: cout << "THE END!!!";
+			break;
+		}
+		if (result == 1)
+		{
+			playing.level++;
+			int temp;
+			temp = sizeof(playing);
+			plin.seekp(-1 * temp, ios::cur);
+			plin.write((char*)& playing, sizeof(playing));
+		}
+	} while (result == 1);
+}
+void menu()
+{
+	int  ch;
+	cout << "\t\t\t\t***************\n";
+	cout << "\t\t\t\tSNAKE XENSIA\n";
+	cout << "\t\t\t\t****************\n\n";
+	cout << "\t\t\t\tPLAY GAME(1)\n";
+	cout << "\t\t\t\tSETTINGS(2)\n";
+	cout << "\t\t\t\tSCORE BOARD(3)\n";
+	cout << "\t\t\t\tQUIT(4)\n";
+	cin >> ch;
+	switch (ch)
+	{
+	case 1:	player_data_input();
+		break;
+		/*case 2: settings();
+			break;
+		case 3: scoreboard();*/
+		break;
+	case 4: exit(0);
+		break;
+	default: cout << "Such option does not exit";
+	}
+
+}
+int main()
+{
+	string name;
+	//menu();
+	int temp = 1;
+	int temp1 = 0;
+	name = player_data_input();
+	play_game(name);
+	_getch();
+	return 0;
+}
